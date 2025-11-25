@@ -20,4 +20,9 @@ class AppStrings {
 
   // Empty state
   static const String noTasks = 'אין מטלות להגשה';
+
+  // Error messages
+  static const String loadError = 'שגיאה בטעינת המידע';
+  static const String refreshError = 'שגיאה ברענון';
+  static const String retryButton = 'נסה שוב';
 }

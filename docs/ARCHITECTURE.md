@@ -49,7 +49,10 @@ lib/
 │   ├── event_card.dart               # Priority-styled event card
 │   ├── event_section.dart            # Section with header + events
 │   ├── greeting_header.dart          # Time-based greeting display
-│   └── summary_text.dart             # Weekly deadline summary
+│   ├── summary_text.dart             # Weekly deadline summary
+│   ├── shimmer_event_card.dart       # Skeleton loading card
+│   ├── shimmer_loading_view.dart     # Full shimmer loading state
+│   └── error_state_view.dart         # Error display with retry
 └── screens/                           # Top-level pages
     └── home_screen.dart              # Main application screen
 ```
@@ -140,6 +143,30 @@ All text styles are defined in `lib/constants/text_styles.dart`:
   - 1 event: "יש לך מטלה אחת להגשה השבוע"
   - 2+ events: "יש לך X מטלות להגשה השבוע"
 
+### 5. Shimmer Loading View (`lib/widgets/shimmer_loading_view.dart`)
+
+**Purpose:** Display skeleton loading state during initial data fetch
+
+**Behavior:**
+- Shows shimmer skeleton that matches the actual content layout
+- Displays 3 sections (Today, Tomorrow, This Week) with skeleton cards
+- Each skeleton card matches EventCard dimensions and priority colors
+- Uses `shimmer` package for animated gradient effect
+
+### 6. Error State View (`lib/widgets/error_state_view.dart`)
+
+**Purpose:** Display error state with retry functionality
+
+**Props:**
+- `errorMessage: String?` - Error message to display
+- `onRetry: VoidCallback` - Callback for retry button
+
+**Behavior:**
+- Shows large error icon (red)
+- Displays localized error message
+- Shows technical error details below
+- Provides retry button with refresh icon
+
 ---
 
 ## Business Logic
@@ -172,34 +199,69 @@ Events are grouped into the following categories in order:
 
 ## Data Flow
 
+### Initial Load
 ```
-Moodle API (REST)
+App Start
+    ↓
+HomeScreen.initState()
+    ↓
+_loadDeadlines() → setState(_isLoading = true)
+    ↓
+ShimmerLoadingView displayed
     ↓
 MoodleClient.fetchDeadlines()
     ↓
 List<MoodleEvent>
     ↓
+setState(_events = data, _isLoading = false)
+    ↓
 EventDateUtils.groupEventsByDate()
     ↓
 Map<String, List<MoodleEvent>>
     ↓
-HomeScreen (renders sections)
-    ↓
 EventSection → EventCard widgets
+```
+
+### Pull-to-Refresh
+```
+User pulls down
+    ↓
+RefreshIndicator triggers _onRefresh()
+    ↓
+MoodleClient.fetchDeadlines() (content still visible)
+    ↓
+setState(_events = new data)
+    ↓
+UI updates with fresh data
+```
+
+### Error Handling
+```
+Initial Load Error → Full screen error + SnackBar with retry
+Refresh Error → Content stays visible + SnackBar with retry
 ```
 
 ---
 
 ## State Management
 
-**Current Approach:** Simple StatefulWidget with FutureBuilder
+**Current Approach:** StatefulWidget with manual state management
 
 **HomeScreen State:**
 - `_moodleClient`: Instance of MoodleClient
-- `_deadlines`: Future that resolves to event list
+- `_isLoading`: Boolean flag for initial load state
+- `_events`: Nullable list of MoodleEvent objects
+- `_errorMessage`: Nullable string for error handling
+
+**State Flow:**
+1. **Initial Load:** `_loadDeadlines()` sets `_isLoading = true`, fetches data, updates `_events`
+2. **Pull-to-Refresh:** `_onRefresh()` fetches new data while keeping existing data visible
+3. **Error Handling:** Separate flows for initial load errors (full screen) vs refresh errors (SnackBar)
 
 **Why this approach:**
 - Simple and effective for current scope
+- Direct control over loading and error states
+- Supports RefreshIndicator requirements
 - No external state management dependencies
 - Easy to understand and maintain
 
@@ -360,8 +422,8 @@ Test complete user flows in `integration_test/`.
 ### Future Optimizations
 1. **Lazy loading:** Use `ListView.builder` if event count grows
 2. **Image caching:** If event icons are added
-3. **Debouncing:** If pull-to-refresh is implemented
-4. **Pagination:** If fetching >100 events
+3. **Pagination:** If fetching >100 events
+4. **Data caching:** Cache fetched events for offline access
 
 ---
 
@@ -410,11 +472,16 @@ Requires Xcode and Apple Developer account.
 2. **English Localization** - Support multiple languages
 3. **Event Icons** - Visual indicators (assignment, quiz, lab)
 4. **Clickable Cards** - Navigate to Moodle event URL
-5. **Pull-to-Refresh** - Manual data refresh
-6. **Filtering** - Filter by course or priority
-7. **Calendar View** - Alternative visualization
-8. **Notifications** - Local reminders for upcoming deadlines
-9. **Home Screen Widget** - Quick view without opening app
+5. **Filtering** - Filter by course or priority
+6. **Calendar View** - Alternative visualization
+7. **Notifications** - Local reminders for upcoming deadlines
+8. **Home Screen Widget** - Quick view without opening app
+9. **Background Sync** - Automatic periodic data refresh with workmanager
+
+### Recently Implemented
+- ✅ **Pull-to-Refresh** - Manual data refresh via gesture
+- ✅ **Shimmer Loading** - Skeleton screens during load
+- ✅ **Error Handling** - User-friendly error states with retry
 
 ### Architecture Changes for Scale
 - **State Management:** Add Provider/Riverpod when state complexity grows
@@ -495,6 +562,6 @@ For questions or issues:
 
 ---
 
-**Last Updated:** 2024-11-25
-**Version:** 1.0.0
+**Last Updated:** 2025-01-25
+**Version:** 1.1.0
 **Maintained By:** Development Team

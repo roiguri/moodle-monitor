@@ -3,11 +3,11 @@ import 'package:moodle_monitor/models/moodle_event.dart';
 import 'package:moodle_monitor/services/moodle_client.dart';
 import 'package:moodle_monitor/widgets/greeting_header.dart';
 import 'package:moodle_monitor/widgets/summary_text.dart';
-import 'package:moodle_monitor/widgets/event_card.dart';
 import 'package:moodle_monitor/widgets/event_section.dart';
+import 'package:moodle_monitor/widgets/shimmer_loading_view.dart';
+import 'package:moodle_monitor/widgets/error_state_view.dart';
 import 'package:moodle_monitor/utils/date_utils.dart';
 import 'package:moodle_monitor/constants/app_strings.dart';
-import 'package:moodle_monitor/constants/text_styles.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -18,83 +18,162 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late final MoodleClient _moodleClient;
-  late Future<List<MoodleEvent>> _deadlines;
+
+  bool _isLoading = true;
+  List<MoodleEvent>? _events;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
     _moodleClient = MoodleClient();
-    _deadlines = _moodleClient.fetchDeadlines();
+    _loadDeadlines();
+  }
+
+  Future<void> _loadDeadlines() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final events = await _moodleClient.fetchDeadlines();
+      if (mounted) {
+        setState(() {
+          _events = events;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+        });
+        _showErrorSnackBar();
+      }
+    }
+  }
+
+  Future<void> _onRefresh() async {
+    try {
+      final events = await _moodleClient.fetchDeadlines();
+      if (mounted) {
+        setState(() {
+          _events = events;
+          _errorMessage = null;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+        });
+        _showRefreshErrorSnackBar();
+      }
+    }
+  }
+
+  void _showErrorSnackBar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text(AppStrings.loadError),
+        action: SnackBarAction(
+          label: AppStrings.retryButton,
+          onPressed: _loadDeadlines,
+        ),
+        duration: const Duration(seconds: 6),
+      ),
+    );
+  }
+
+  void _showRefreshErrorSnackBar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text(AppStrings.refreshError),
+        action: SnackBarAction(
+          label: AppStrings.retryButton,
+          onPressed: _onRefresh,
+        ),
+        duration: const Duration(seconds: 4),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: FutureBuilder<List<MoodleEvent>>(
-          future: _deadlines,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final events = snapshot.data!;
-              final groupedEvents = EventDateUtils.groupEventsByDate(events);
-              final dayKeys = EventDateUtils.getSortedDayKeys(groupedEvents);
-
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const GreetingHeader(),
-                    SummaryText(allEvents: events),
-
-                    // Display all sections in order
-                    ...dayKeys.map((dayKey) {
-                      final sectionEvents = groupedEvents[dayKey]!;
-                      EventPriority priority;
-
-                      // Determine priority based on section
-                      if (dayKey == AppStrings.today) {
-                        priority = EventPriority.high;
-                      } else if (dayKey == AppStrings.tomorrow) {
-                        priority = EventPriority.medium;
-                      } else {
-                        priority = EventPriority.low;
-                      }
-
-                      return EventSection(
-                        title: dayKey,
-                        events: sectionEvents,
-                        priority: priority,
-                      );
-                    }),
-
-                    // Empty state
-                    if (dayKeys.isEmpty)
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Text(
-                          AppStrings.noTasks,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-
-                    const SizedBox(height: 24),
-                  ],
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text('Error: ${snapshot.error}'),
-              );
-            }
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          },
-        ),
+        child: _buildBody(),
       ),
+    );
+  }
+
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const ShimmerLoadingView();
+    }
+
+    if (_errorMessage != null && _events == null) {
+      return ErrorStateView(
+        errorMessage: _errorMessage,
+        onRetry: _loadDeadlines,
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: _buildContent(),
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    final events = _events ?? [];
+    final groupedEvents = EventDateUtils.groupEventsByDate(events);
+    final dayKeys = EventDateUtils.getSortedDayKeys(groupedEvents);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const GreetingHeader(),
+        SummaryText(allEvents: events),
+
+        ...dayKeys.map((dayKey) {
+          final sectionEvents = groupedEvents[dayKey]!;
+          EventPriority priority;
+
+          if (dayKey == AppStrings.today) {
+            priority = EventPriority.high;
+          } else if (dayKey == AppStrings.tomorrow) {
+            priority = EventPriority.medium;
+          } else {
+            priority = EventPriority.low;
+          }
+
+          return EventSection(
+            title: dayKey,
+            events: sectionEvents,
+            priority: priority,
+          );
+        }),
+
+        if (dayKeys.isEmpty)
+          const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text(
+              AppStrings.noTasks,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+
+        const SizedBox(height: 24),
+      ],
     );
   }
 }

@@ -21,7 +21,28 @@
 - [x] Implement `fetchDeadlines()`.
 - [x] Integrate UI with `FutureBuilder` in `main.dart`.
 
-## Phase 5: Android Widget Integration
+## Phase 5: UI Development & Polish
+- [x] Implement priority-based color scheme.
+- [x] Create date categorization logic (`EventDateUtils`).
+- [x] Build reusable widget components.
+- [x] Add Hebrew localization support.
+- [x] Implement time-based greeting system.
+
+## Phase 6: Data Refresh & Loading States
+- [x] Add shimmer package dependency.
+- [x] Refactor state management (from FutureBuilder to manual state).
+- [x] Implement pull-to-refresh functionality.
+- [x] Create shimmer loading skeleton views.
+- [x] Implement error handling with retry.
+- [x] Add Hebrew error messages.
+
+## Phase 7: Code Refactoring
+- [x] Extract shimmer loading view into separate widget.
+- [x] Extract error state view into separate widget.
+- [x] Create reusable shimmer event card widget.
+- [x] Refactor `home_screen.dart` for better maintainability.
+
+## Phase 8: Android Widget Integration
 - [ ] Create native layout `widget_layout.xml`.
 - [ ] Implement Data Bridge in Dart (`HomeWidget.saveWidgetData`).
 - [ ] Implement Kotlin `HomeWidgetProvider`.
