@@ -18,5 +18,11 @@
 - **Application Entry Point:** Sanitized `lib/main.dart` to a minimal `MaterialApp` to prepare for UI development.
 - **Emulator Test:** Successfully ran the application on an Android Emulator to confirm the build pipeline is functional.
 
+### Phase 4: Core Logic Implementation
+- **Data Model:** Created `lib/models/moodle_event.dart` with a `fromJson` factory to parse Moodle API responses.
+- **API Client:** Implemented `lib/services/moodle_client.dart` to fetch calendar events using the `core_calendar_get_action_events_by_timesort` webservice function.
+- **UI Integration:** Integrated the `MoodleClient` into the main UI using a `FutureBuilder` to asynchronously fetch and display the list of deadlines.
+- **Date Formatting:** Added the `intl` package to format the Unix timestamps from the API into a human-readable date and time string.
+
 ---
 *This file tracks the history of completed actions. For pending tasks, see `docs/checklist.md`.*

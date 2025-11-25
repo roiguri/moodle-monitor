@@ -16,10 +16,10 @@
 - [x] Run `flutter run` on Android Emulator.
 
 ## Phase 4: Core Logic Implementation
-- [ ] Create `lib/models/moodle_event.dart`.
-- [ ] Create `lib/services/moodle_client.dart` (API Client).
-- [ ] Implement `fetchDeadlines()`.
-- [ ] Integrate UI with `FutureBuilder` in `main.dart`.
+- [x] Create `lib/models/moodle_event.dart`.
+- [x] Create `lib/services/moodle_client.dart` (API Client).
+- [x] Implement `fetchDeadlines()`.
+- [x] Integrate UI with `FutureBuilder` in `main.dart`.
 
 ## Phase 5: Android Widget Integration
 - [ ] Create native layout `widget_layout.xml`.
