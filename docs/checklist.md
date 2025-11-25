@@ -12,8 +12,8 @@
 - [x] Create `.env` file and configure `pubspec.yaml` assets.
 
 ## Phase 3: "Hello World" Validation
-- [ ] Sanitize `lib/main.dart` (minimal MaterialApp).
-- [ ] Run `flutter run` on Android Emulator.
+- [x] Sanitize `lib/main.dart` (minimal MaterialApp).
+- [x] Run `flutter run` on Android Emulator.
 
 ## Phase 4: Core Logic Implementation
 - [ ] Create `lib/models/moodle_event.dart`.
