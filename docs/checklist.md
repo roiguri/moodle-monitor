@@ -4,8 +4,8 @@
 - [x] Create project structure and `scripts` folder.
 - [x] Move `moodle_fetch.py` to `scripts/`.
 - [x] Modify `moodle_fetch.py` to use `MOODLE_TOKEN` env var.
-- [ ] Initialize Flutter project (`flutter create .`).
-- [ ] Configure Git (gitignore, initial commit).
+- [x] Initialize Flutter project (`flutter create .`).
+- [x] Configure Git (gitignore, initial commit).
 
 ## Phase 2: Dependency Management
 - [ ] Install Flutter packages (`http`, `flutter_secure_storage`, `home_widget`, `workmanager`, `flutter_dotenv`).

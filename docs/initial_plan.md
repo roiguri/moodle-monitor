@@ -1,5 +1,7 @@
 # Initial Plan
 
+This document outlines the development plan for "Moodle Monitor," a cross-platform application designed to help users track their Moodle course deadlines and events efficiently. The application aims to provide timely notifications and a convenient overview of upcoming academic commitments, including an Android Home Screen Widget for quick access to information. It will leverage Flutter for a unified codebase across Android, iOS, and Web, and integrate with the Moodle API to fetch relevant data securely.
+
 ## Phase 1: Project & Environment Initialization
 
 ### Create Project Structure
