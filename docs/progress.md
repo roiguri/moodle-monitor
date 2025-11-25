@@ -10,5 +10,9 @@
 - **Flutter Initialization:** Initialized a new Flutter project (`flutter create .`) with Android, iOS, and Web support. Removed desktop platforms.
 - **Git Configuration:** Created a comprehensive `.gitignore` and committed the initial project structure.
 
+### Phase 2: Dependency Management
+- **Flutter Package Installation:** Added `http`, `flutter_secure_storage`, `home_widget`, `workmanager`, and `flutter_dotenv` packages.
+- **Environment Configuration:** Created `.env` file and configured `pubspec.yaml` to include it as an asset.
+
 ---
 *This file tracks the history of completed actions. For pending tasks, see `docs/checklist.md`.*

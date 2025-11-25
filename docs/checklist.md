@@ -8,8 +8,8 @@
 - [x] Configure Git (gitignore, initial commit).
 
 ## Phase 2: Dependency Management
-- [ ] Install Flutter packages (`http`, `flutter_secure_storage`, `home_widget`, `workmanager`, `flutter_dotenv`).
-- [ ] Create `.env` file and configure `pubspec.yaml` assets.
+- [x] Install Flutter packages (`http`, `flutter_secure_storage`, `home_widget`, `workmanager`, `flutter_dotenv`).
+- [x] Create `.env` file and configure `pubspec.yaml` assets.
 
 ## Phase 3: "Hello World" Validation
 - [ ] Sanitize `lib/main.dart` (minimal MaterialApp).
