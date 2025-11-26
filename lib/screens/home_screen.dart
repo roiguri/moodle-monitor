@@ -7,7 +7,9 @@ import 'package:moodle_monitor/widgets/event_section.dart';
 import 'package:moodle_monitor/widgets/shimmer_loading_view.dart';
 import 'package:moodle_monitor/widgets/error_state_view.dart';
 import 'package:moodle_monitor/utils/date_utils.dart';
-import 'package:moodle_monitor/constants/app_strings.dart';
+import 'package:moodle_monitor/utils/course_utils.dart';
+import '../constants/app_strings.dart';
+import '../widgets/view_switcher.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -22,6 +24,13 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = true;
   List<MoodleEvent>? _events;
   String? _errorMessage;
+  ViewType _selectedView = ViewType.day;
+
+  void _onViewChanged(ViewType viewType) {
+    setState(() {
+      _selectedView = viewType;
+    });
+  }
 
   @override
   void initState() {
@@ -132,48 +141,67 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildContent() {
     final events = _events ?? [];
-    final groupedEvents = EventDateUtils.groupEventsByDate(events);
-    final dayKeys = EventDateUtils.getSortedDayKeys(groupedEvents);
+    final groupedEventsByDate = EventDateUtils.groupEventsByDate(events);
+    final dayKeys = EventDateUtils.getSortedDayKeys(groupedEventsByDate);
+
+    final groupedEventsByCourse = CourseUtils.groupEventsByCourse(events);
+    final courseKeys = CourseUtils.getSortedCourseKeys(groupedEventsByCourse);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const GreetingHeader(),
+        GreetingHeader(
+          trailingWidget: ViewSwitcher(onViewChanged: _onViewChanged),
+        ),
         SummaryText(allEvents: events),
+        if (_selectedView == ViewType.day) ...[
+          ...dayKeys.map((dayKey) {
+            final sectionEvents = groupedEventsByDate[dayKey]!;
+            EventPriority priority;
 
-        ...dayKeys.map((dayKey) {
-          final sectionEvents = groupedEvents[dayKey]!;
-          EventPriority priority;
+            if (dayKey == AppStrings.today) {
+              priority = EventPriority.high;
+            } else if (dayKey == AppStrings.tomorrow) {
+              priority = EventPriority.medium;
+            } else {
+              priority = EventPriority.low;
+            }
 
-          if (dayKey == AppStrings.today) {
-            priority = EventPriority.high;
-          } else if (dayKey == AppStrings.tomorrow) {
-            priority = EventPriority.medium;
-          } else {
-            priority = EventPriority.low;
-          }
+            return EventSection(
+              title: dayKey,
+              events: sectionEvents,
+              priority: priority,
+              showCourse: true,
+            );
+          }),
+          if (dayKeys.isEmpty) _buildEmptyState(),
+        ] else ...[
+          ...courseKeys.map((courseKey) {
+            final sectionEvents = groupedEventsByCourse[courseKey]!;
 
-          return EventSection(
-            title: dayKey,
-            events: sectionEvents,
-            priority: priority,
-          );
-        }),
-
-        if (dayKeys.isEmpty)
-          const Padding(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              AppStrings.noTasks,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-            ),
-          ),
-
+            return EventSection(
+              title: courseKey,
+              events: sectionEvents,
+              showCourse: false,
+            );
+          }),
+          if (courseKeys.isEmpty) _buildEmptyState(),
+        ],
         const SizedBox(height: 24),
       ],
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return const Padding(
+      padding: EdgeInsets.all(16),
+      child: Text(
+        AppStrings.noTasks,
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.grey,
+        ),
+      ),
     );
   }
 }

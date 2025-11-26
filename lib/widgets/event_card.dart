@@ -8,11 +8,13 @@ import 'package:moodle_monitor/constants/text_styles.dart';
 class EventCard extends StatelessWidget {
   final MoodleEvent event;
   final EventPriority priority;
+  final bool showCourse;
 
   const EventCard({
     Key? key,
     required this.event,
     required this.priority,
+    this.showCourse = true,
   }) : super(key: key);
 
   @override
@@ -24,6 +26,9 @@ class EventCard extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      constraints: showCourse
+        ? null
+        : const BoxConstraints(minHeight: 72),
       decoration: BoxDecoration(
         color: colors.background,
         borderRadius: BorderRadius.circular(12),
@@ -37,12 +42,15 @@ class EventCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: showCourse
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
           children: [
             // Event name and course info (switched order)
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     event.name,
@@ -50,11 +58,13 @@ class EventCard extends StatelessWidget {
                       color: colors.text,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    event.course,
-                    style: TextStyles.cardEvent,
-                  ),
+                  if (showCourse) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      event.course,
+                      style: TextStyles.cardEvent,
+                    ),
+                  ],
                 ],
               ),
             ),

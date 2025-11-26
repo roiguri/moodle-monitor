@@ -3,7 +3,9 @@ import 'package:moodle_monitor/utils/greeting_helper.dart';
 import 'package:moodle_monitor/constants/text_styles.dart';
 
 class GreetingHeader extends StatelessWidget {
-  const GreetingHeader({Key? key}) : super(key: key);
+  final Widget? trailingWidget;
+
+  const GreetingHeader({Key? key, this.trailingWidget}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +23,15 @@ class GreetingHeader extends StatelessWidget {
               style: TextStyles.heading,
             ),
           ),
-          Image.asset(
-            'assets/images/logo.png',
-            width: 32,
-            height: 32,
-            fit: BoxFit.contain,
-          ),
+          if (trailingWidget != null)
+            trailingWidget!
+          else
+            Image.asset(
+              'assets/images/logo.png',
+              width: 32,
+              height: 32,
+              fit: BoxFit.contain,
+            ),
         ],
       ),
     );
