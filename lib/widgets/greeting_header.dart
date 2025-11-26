@@ -11,9 +11,23 @@ class GreetingHeader extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      child: Text(
-        greeting,
-        style: TextStyles.heading,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Text(
+              greeting,
+              style: TextStyles.heading,
+            ),
+          ),
+          Image.asset(
+            'assets/images/logo.png',
+            width: 32,
+            height: 32,
+            fit: BoxFit.contain,
+          ),
+        ],
       ),
     );
   }
