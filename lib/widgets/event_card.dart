@@ -8,11 +8,13 @@ import 'package:moodle_monitor/constants/text_styles.dart';
 class EventCard extends StatelessWidget {
   final MoodleEvent event;
   final EventPriority priority;
+  final bool showCourse;
 
   const EventCard({
     Key? key,
     required this.event,
     required this.priority,
+    this.showCourse = true,
   }) : super(key: key);
 
   @override
@@ -50,11 +52,13 @@ class EventCard extends StatelessWidget {
                       color: colors.text,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    event.course,
-                    style: TextStyles.cardEvent,
-                  ),
+                  if (showCourse) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      event.course,
+                      style: TextStyles.cardEvent,
+                    ),
+                  ],
                 ],
               ),
             ),
