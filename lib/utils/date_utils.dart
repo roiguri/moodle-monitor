@@ -1,4 +1,3 @@
-import 'package:intl/intl.dart';
 import 'package:moodle_monitor/models/moodle_event.dart';
 import 'package:moodle_monitor/constants/app_strings.dart';
 
@@ -24,28 +23,23 @@ class EventDateUtils {
     final Map<String, List<MoodleEvent>> groupedEvents = {};
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final tomorrow = today.add(const Duration(days: 1));
-    final endOfWeek = today.add(const Duration(days: 7));
-    final endOfNextWeek = today.add(const Duration(days: 14));
-    final endOfMonth = DateTime(now.year, now.month + 1, 0);
 
     for (final event in events) {
       final deadline = DateTime.fromMillisecondsSinceEpoch(event.timeSort * 1000);
       final deadlineDay = DateTime(deadline.year, deadline.month, deadline.day);
+      final daysUntil = deadlineDay.difference(today).inDays;
 
       String dayKey;
-      if (deadlineDay.isAtSameMomentAs(today)) {
+      if (daysUntil == 0) {
         dayKey = AppStrings.today;
-      } else if (deadlineDay.isAtSameMomentAs(tomorrow)) {
+      } else if (daysUntil == 1) {
         dayKey = AppStrings.tomorrow;
-      } else if (deadlineDay.isBefore(endOfWeek)) {
-        dayKey = AppStrings.thisWeek;
-      } else if (deadlineDay.isBefore(endOfNextWeek)) {
-        dayKey = AppStrings.nextWeek;
-      } else if (deadlineDay.isBefore(endOfMonth) || deadlineDay.isAtSameMomentAs(endOfMonth)) {
-        dayKey = AppStrings.thisMonth;
+      } else if (daysUntil <= 7) {
+        dayKey = AppStrings.next7Days;
+      } else if (daysUntil <= 30) {
+        dayKey = AppStrings.next30Days;
       } else {
-        dayKey = AppStrings.overMonth;
+        dayKey = AppStrings.later;
       }
 
       if (groupedEvents.containsKey(dayKey)) {
@@ -64,10 +58,9 @@ class EventDateUtils {
     final order = [
       AppStrings.today,
       AppStrings.tomorrow,
-      AppStrings.thisWeek,
-      AppStrings.nextWeek,
-      AppStrings.thisMonth,
-      AppStrings.overMonth,
+      AppStrings.next7Days,
+      AppStrings.next30Days,
+      AppStrings.later,
     ];
 
     // Sort according to the order

@@ -32,7 +32,7 @@ class ShimmerLoadingView extends StatelessWidget {
           ),
           _buildShimmerSection(AppStrings.today, EventPriority.high, 2),
           _buildShimmerSection(AppStrings.tomorrow, EventPriority.medium, 2),
-          _buildShimmerSection(AppStrings.thisWeek, EventPriority.low, 1),
+          _buildShimmerSection(AppStrings.next7Days, EventPriority.low, 1),
           const SizedBox(height: 24),
         ],
       ),

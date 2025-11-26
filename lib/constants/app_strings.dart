@@ -8,10 +8,9 @@ class AppStrings {
   // Date labels
   static const String today = 'היום';
   static const String tomorrow = 'מחר';
-  static const String thisWeek = 'השבוע';
-  static const String nextWeek = 'שבוע הבא';
-  static const String thisMonth = 'החודש';
-  static const String overMonth = 'מעל חודש';
+  static const String next7Days = '7 הימים הבאים';
+  static const String next30Days = '30 הימים הבאים';
+  static const String later = 'מאוחר יותר';
 
   // Summary (with proper Hebrew grammar)
   static const String noDeadlinesThisWeek = 'אין מטלות השבוע';
