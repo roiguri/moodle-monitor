@@ -9,6 +9,15 @@
     <string name="no_upcoming_deadlines">אין מטלות להגשה בקרוב. לחץ על אייקון הרענון לסנכרון.</string>
     <string name="loading">טוען...</string>
 
+    <!-- Widget strings -->
+    <string name="widget_header_deadlines">מטלות</string>
+    <string name="widget_empty_state">אין מטלות קרובות</string>
+    <string name="widget_no_task">אין משימה</string>
+
+    <!-- Content descriptions for accessibility -->
+    <string name="cd_calendar_icon">אייקון לוח שנה</string>
+    <string name="cd_priority_indicator">מחוון עדיפות</string>
+
     <!-- Month abbreviations in Hebrew -->
     <string name="jan">ינו</string>
     <string name="feb">פבר</string>

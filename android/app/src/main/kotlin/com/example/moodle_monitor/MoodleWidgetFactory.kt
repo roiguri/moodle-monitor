@@ -111,7 +111,7 @@ class MoodleWidgetFactory(
 
     private fun getEmptyView(): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.widget_list_item)
-        views.setTextViewText(R.id.task_name, "No task")
+        views.setTextViewText(R.id.task_name, context.getString(R.string.widget_no_task))
         views.setTextViewText(R.id.task_course, "")
         views.setTextViewText(R.id.task_date, "")
         return views
