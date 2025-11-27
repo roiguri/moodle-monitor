@@ -25,7 +25,7 @@
 - **Date Formatting:** Added the `intl` package to format the Unix timestamps from the API into a human-readable date and time string.
 
 ### Phase 5: UI Development & Polish
-- **Priority-Based Design:** Implemented color-coded event cards with pastel colors (red for today, yellow for tomorrow, blue for future).
+- **Priority-Based Design:** Implemented color-coded event cards with pastel colors (pastel red #EF5350 for today, pastel yellow #FFCA28 for tomorrow, pastel light blue #64B5F6 for future).
 - **Date Categorization:** Created `EventDateUtils` to group events into time-based categories (Today, Tomorrow, This Week, etc.).
 - **Hebrew Localization:** Centralized all strings in `app_strings.dart` with Hebrew translations.
 - **Time-Based Greetings:** Implemented dynamic greeting header that changes based on time of day.
@@ -45,6 +45,19 @@
 - **Shimmer Event Card:** Created reusable `ShimmerEventCard` widget matching real card layout.
 - **Code Reduction:** Reduced `home_screen.dart` from 283 lines to 179 lines (37% reduction).
 - **Improved Maintainability:** Better separation of concerns with presentation logic moved to dedicated widget files.
+
+### Phase 8: Android Widget Integration
+- **Widget Layouts:** Created `widget_layout.xml` with RTL support and `widget_event_item.xml` for displaying individual events.
+- **Widget Resources:** Added `widget_background.xml` drawable, Hebrew string resources, and `widget_info.xml` configuration.
+- **Widget Service:** Implemented `lib/services/widget_service.dart` with data bridge using `home_widget` package to save event data to shared preferences.
+- **Background Sync:** Integrated `workmanager` for periodic widget updates every 30 minutes with network constraints.
+- **Kotlin Widget Provider:** Created `MoodleWidgetProvider.kt` that dynamically renders events with:
+  - Priority color indicators (pastel red #EF5350 for today, pastel yellow #FFCA28 for tomorrow, pastel light blue #64B5F6 for future)
+  - Hebrew month abbreviations
+  - Empty state with checkmark icon when no deadlines exist
+  - Refresh button functionality
+- **Android Configuration:** Updated `AndroidManifest.xml` with widget receiver, WorkManager services, and required permissions.
+- **App Integration:** Modified `main.dart` to initialize widget service on app start, and `home_screen.dart` to update widget after loading/refreshing events.
 
 ---
 *This file tracks the history of completed actions. For pending tasks, see `docs/checklist.md`.*

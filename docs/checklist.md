@@ -43,7 +43,14 @@
 - [x] Refactor `home_screen.dart` for better maintainability.
 
 ## Phase 8: Android Widget Integration
-- [ ] Create native layout `widget_layout.xml`.
-- [ ] Implement Data Bridge in Dart (`HomeWidget.saveWidgetData`).
-- [ ] Implement Kotlin `HomeWidgetProvider`.
-- [ ] Configure `workmanager` for background sync.
+- [x] Create native layout `widget_layout.xml`.
+- [x] Create widget event item layout `widget_event_item.xml`.
+- [x] Create widget background drawable and resources.
+- [x] Add Hebrew string resources for widget.
+- [x] Create widget info configuration (`widget_info.xml`).
+- [x] Implement Data Bridge in Dart (`WidgetService`).
+- [x] Implement Kotlin `MoodleWidgetProvider`.
+- [x] Configure `workmanager` for background sync.
+- [x] Update AndroidManifest.xml with widget and WorkManager configuration.
+- [x] Integrate widget updates in HomeScreen (on load and refresh).
+- [ ] Test widget on Android device/emulator.

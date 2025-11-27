@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Moodle Monitor</string>
+    <string name="app_name_hebrew">Moodle Monitor</string>
+    <string name="widget_name">Moodle Monitor Widget</string>
+    <string name="widget_description">מציג מטלות קרובות ממערכת המודל</string>
+    <string name="refresh">רענון</string>
+    <string name="all_clear">הכל בסדר!</string>
+    <string name="no_upcoming_deadlines">אין מטלות להגשה בקרוב. לחץ על אייקון הרענון לסנכרון.</string>
+    <string name="loading">טוען...</string>
+
+    <!-- Month abbreviations in Hebrew -->
+    <string name="jan">ינו</string>
+    <string name="feb">פבר</string>
+    <string name="mar">מרץ</string>
+    <string name="apr">אפר</string>
+    <string name="may">מאי</string>
+    <string name="jun">יוני</string>
+    <string name="jul">יולי</string>
+    <string name="aug">אוג</string>
+    <string name="sep">ספט</string>
+    <string name="oct">אוק</string>
+    <string name="nov">נוב</string>
+    <string name="dec">דצמ</string>
+</resources>

@@ -48,5 +48,4 @@ app.*.map.json
 # Project Specific
 .env
 __pycache__/
-Agents.md
 *.local.json

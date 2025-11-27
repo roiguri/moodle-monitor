@@ -3,10 +3,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:moodle_monitor/screens/home_screen.dart';
+import 'package:moodle_monitor/services/widget_service.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await initializeDateFormatting('he_IL', null);
+  await WidgetService.initialize();
   runApp(const MyApp());
 }
 

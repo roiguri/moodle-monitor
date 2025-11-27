@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moodle_monitor/models/moodle_event.dart';
 import 'package:moodle_monitor/services/moodle_client.dart';
+import 'package:moodle_monitor/services/widget_service.dart';
 import 'package:moodle_monitor/widgets/greeting_header.dart';
 import 'package:moodle_monitor/widgets/summary_text.dart';
 import 'package:moodle_monitor/widgets/event_section.dart';
@@ -52,6 +53,8 @@ class _HomeScreenState extends State<HomeScreen> {
           _events = events;
           _isLoading = false;
         });
+        // Update widget after loading events
+        WidgetService.updateWidget();
       }
     } catch (e) {
       if (mounted) {
@@ -72,6 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
           _events = events;
           _errorMessage = null;
         });
+        // Update widget after refreshing
+        WidgetService.updateWidget();
       }
     } catch (e) {
       if (mounted) {
