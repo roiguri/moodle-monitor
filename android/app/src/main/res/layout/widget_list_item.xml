@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- List item layout for each task in the widget ListView -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp"
+    android:layoutDirection="rtl">
+
+    <!-- Priority Color Indicator -->
+    <ImageView
+        android:id="@+id/task_indicator"
+        android:layout_width="3dp"
+        android:layout_height="40dp"
+        android:contentDescription="@string/cd_priority_indicator"
+        android:layout_marginStart="6dp"/>
+
+    <!-- Task Info (Name + Course) -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginStart="12dp">
+
+        <TextView
+            android:id="@+id/task_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="14sp"
+            android:textColor="@color/widget_text_primary"
+            android:fontFamily="sans-serif"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textAlignment="viewStart"/>
+
+        <TextView
+            android:id="@+id/task_course"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="12sp"
+            android:textColor="@color/widget_text_secondary"
+            android:fontFamily="sans-serif"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textAlignment="viewStart"/>
+    </LinearLayout>
+
+    <!-- Due Date -->
+    <TextView
+        android:id="@+id/task_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="12sp"
+        android:textColor="@color/widget_text_secondary"
+        android:fontFamily="sans-serif-condensed"
+        android:textStyle="bold"
+        android:layout_marginEnd="8dp"/>
+
+</LinearLayout>

@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Launcher -->
     <color name="ic_launcher_background">#FFFFFF</color>
+
+    <!-- Widget Background & Surfaces -->
+    <color name="widget_background">#F3F4F6</color> <!-- Light gray -->
+
+    <!-- Text Colors -->
+    <color name="widget_text_primary">#1F2937</color> <!-- Dark gray, almost black -->
+    <color name="widget_text_secondary">#6B7280</color> <!-- Medium gray -->
+
+    <!-- Priority Indicators -->
+    <color name="priority_high">#DC2626</color> <!-- Darker red for better contrast -->
+    <color name="priority_medium">#EA580C</color> <!-- Darker amber -->
+    <color name="priority_low">#2563EB</color> <!-- Darker blue -->
+    <color name="priority_default">#9CA3AF</color> <!-- Light gray -->
 </resources>
