@@ -55,10 +55,10 @@ class MoodleWidgetFactory(
 
         // Set priority color indicator
         val color = when (event.priority) {
-            "high" -> Color.parseColor("#EF4444")    // Red (Today)
-            "medium" -> Color.parseColor("#F59E0B")  // Yellow (Tomorrow)
-            "low" -> Color.parseColor("#3B82F6")     // Blue (Future)
-            else -> Color.parseColor("#6B7280")      // Gray (default)
+            "high" -> context.getColor(R.color.priority_high)
+            "medium" -> context.getColor(R.color.priority_medium)
+            "low" -> context.getColor(R.color.priority_low)
+            else -> context.getColor(R.color.priority_default)
         }
         views.setInt(R.id.task_indicator, "setBackgroundColor", color)
 

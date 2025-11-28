@@ -28,7 +28,7 @@
             android:text="@string/widget_header_deadlines"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/widget_text_primary"
             android:fontFamily="sans-serif"
             android:layout_marginStart="8dp"/>
     </LinearLayout>
@@ -52,7 +52,7 @@
         android:text="@string/widget_empty_state"
         android:gravity="center"
         android:textSize="14sp"
-        android:textColor="#9CA3AF"
+        android:textColor="@color/widget_text_secondary"
         android:fontFamily="sans-serif"
         android:visibility="gone"/>
 
