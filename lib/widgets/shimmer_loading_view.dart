@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:moodle_monitor/widgets/greeting_header.dart';
 import 'package:moodle_monitor/widgets/shimmer_event_card.dart';
+import 'package:moodle_monitor/widgets/view_switcher.dart';
 import 'package:moodle_monitor/utils/date_utils.dart';
 import 'package:moodle_monitor/constants/app_strings.dart';
 
@@ -14,7 +15,9 @@ class ShimmerLoadingView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const GreetingHeader(),
+          GreetingHeader(
+            trailingWidget: ViewSwitcher(onViewChanged: (_) {}),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Shimmer.fromColors(
@@ -45,15 +48,17 @@ class ShimmerLoadingView extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-          child: Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
-            child: Container(
-              height: 18,
-              width: 80,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4),
+          child: Center(
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Container(
+                height: 18,
+                width: 80,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4),
+                ),
               ),
             ),
           ),
