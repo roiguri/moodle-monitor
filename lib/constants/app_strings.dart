@@ -34,6 +34,18 @@ class AppStrings {
   static const String navCourses = 'קורסים';
   static const String navSettings = 'הגדרות';
 
+  // Courses
+  static const String coursesTitle = 'כל הקורסים';
+  static const String myCoursesTitle = 'הקורסים שלי';
+  static const String hiddenCoursesSection = 'קורסים מוסתרים';
+  static const String noCourses = 'אין קורסים';
+  static const String courseVisible = 'קורס גלוי';
+  static const String courseHidden = 'קורס מוסתר';
+  static const String showCourse = 'הצג קורס';
+  static const String hideCourse = 'הסתר קורס';
+  static const String openInMoodle = 'פתח ב-Moodle';
+  static const String fetchCoursesError = 'שגיאה בטעינת קורסים';
+
   // Settings
   static const String settingsTitle = 'הגדרות Moodle';
   static const String settingsDescription = 'הגדר את פרטי ההתחברות שלך ל-Moodle כדי לגשת למטלות ולמועדי ההגשה';

@@ -47,17 +47,17 @@ This document tracks the progress of the Moodle Monitor application upgrade to V
 **Goal**: View all courses, hide specific ones, and link to Moodle.
 
 ### Tasks:
-- [ ] Request documentation on get courses API call
-- [ ] Add URL Launcher: Add `url_launcher` to `pubspec.yaml` (already present).
-- [ ] Update Course Model: Ensure your "get all courses" method maps to a model containing: id, fullname, shortname, and viewUrl.
-- [ ] Implement Persistence for Hidden Courses:
-  - [ ] Create a service (e.g., `PreferencesService`) to save/retrieve a `List<String>` of hidden course IDs using `shared_preferences`.
-- [ ] Build CoursesView UI:
-  - [ ] Display a list of all courses fetched from the API.
-  - [ ] Add a "Visibility" toggle icon for each course.
-  - [ ] Action: Tapping the course card should launch the viewUrl in a browser.
-  - [ ] Action: Tapping the toggle should add/remove the ID from the hidden list.
-- [ ] Filter Tasks: Update the TasksView logic to exclude assignments belonging to hidden course IDs.
+- [x] Request documentation on get courses API call
+- [x] Add URL Launcher: Add `url_launcher` to `pubspec.yaml` (already present).
+- [x] Update Course Model: Ensure your "get all courses" method maps to a model containing: id, fullname, shortname, and viewUrl.
+- [x] Implement Persistence for Hidden Courses:
+  - [x] Create a service (e.g., `PreferencesService`) to save/retrieve a `List<String>` of hidden course IDs using `shared_preferences`.
+- [x] Build CoursesView UI:
+  - [x] Display a list of all courses fetched from the API.
+  - [x] Add a "Visibility" toggle icon for each course.
+  - [x] Action: Tapping the course card should launch the viewUrl in a browser.
+  - [x] Action: Tapping the toggle should add/remove the ID from the hidden list.
+- [x] Filter Tasks: Update the TasksView logic to exclude assignments belonging to hidden course IDs.
 
 ---
 

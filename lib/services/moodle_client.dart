@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:moodle_monitor/models/moodle_event.dart';
+import 'package:moodle_monitor/models/moodle_course.dart';
 
 /// Custom exception for authentication/credential errors
 class AuthException implements Exception {
@@ -88,6 +89,61 @@ class MoodleClient {
       throw AuthException('Invalid Moodle credentials. Please check your token and URL.');
     } else {
       throw Exception('Failed to load deadlines: HTTP ${response.statusCode}');
+    }
+  }
+
+  Future<List<MoodleCourse>> fetchCourses() async {
+    final token = await getMoodleToken();
+    final url = await getMoodleUrl();
+
+    if (token == null || token.isEmpty || url == null || url.isEmpty) {
+      throw AuthException(
+        'Moodle credentials not configured. Please set your Moodle URL and Token in Settings.',
+      );
+    }
+
+    // Step 1: Get the current user's ID from site info
+    final siteInfoResponse = await _httpClient.get(Uri.parse(
+        '$url/webservice/rest/server.php?wstoken=$token&wsfunction=core_webservice_get_site_info&moodlewsrestformat=json'));
+
+    if (siteInfoResponse.statusCode != 200) {
+      if (siteInfoResponse.statusCode == 401 || siteInfoResponse.statusCode == 403) {
+        throw AuthException('Invalid Moodle credentials. Please check your token and URL.');
+      }
+      throw Exception('Failed to get site info: HTTP ${siteInfoResponse.statusCode}');
+    }
+
+    final siteInfo = json.decode(siteInfoResponse.body);
+    
+    // Check for Moodle error response
+    if (siteInfo is Map && siteInfo.containsKey('exception')) {
+      throw AuthException('Invalid credentials: ${siteInfo['message'] ?? 'Unknown error'}');
+    }
+
+    final userid = siteInfo['userid'];
+    if (userid == null) {
+      throw Exception('Could not retrieve user ID from site info');
+    }
+
+    // Step 2: Get courses for the current user
+    final response = await _httpClient.get(Uri.parse(
+        '$url/webservice/rest/server.php?wstoken=$token&wsfunction=core_enrol_get_users_courses&userid=$userid&moodlewsrestformat=json'));
+
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body);
+      
+      // Check for Moodle error response
+      if (body is Map && body.containsKey('exception')) {
+        throw AuthException('Invalid credentials: ${body['message'] ?? 'Unknown error'}');
+      }
+      
+      // Response is a list of courses
+      final List<dynamic> courses = body as List<dynamic>;
+      return courses.map((dynamic item) => MoodleCourse.fromJson(item, moodleUrl: url)).toList();
+    } else if (response.statusCode == 401 || response.statusCode == 403) {
+      throw AuthException('Invalid Moodle credentials. Please check your token and URL.');
+    } else {
+      throw Exception('Failed to load courses: HTTP ${response.statusCode}');
     }
   }
 }

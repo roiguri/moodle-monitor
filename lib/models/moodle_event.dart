@@ -1,6 +1,7 @@
 class MoodleEvent {
   final String name;
   final String course;
+  final int courseid;
   final int timeSort;
   final String courseViewUrl;
   final String url;
@@ -8,6 +9,7 @@ class MoodleEvent {
   MoodleEvent({
     required this.name,
     required this.course,
+    required this.courseid,
     required this.timeSort,
     required this.courseViewUrl,
     required this.url,
@@ -17,6 +19,7 @@ class MoodleEvent {
     return MoodleEvent(
       name: json['activityname'] as String,
       course: _cleanCourseName(json['course']['shortname'] as String),
+      courseid: json['course']['id'] as int,
       timeSort: json['timesort'] as int,
       courseViewUrl: json['course']['viewurl'] as String,
       url: json['url'] as String,

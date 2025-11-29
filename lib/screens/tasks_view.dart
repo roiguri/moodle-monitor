@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moodle_monitor/models/moodle_event.dart';
 import 'package:moodle_monitor/services/moodle_client.dart';
+import 'package:moodle_monitor/services/preferences_service.dart';
 import 'package:moodle_monitor/services/widget_service.dart';
 import 'package:moodle_monitor/widgets/greeting_header.dart';
 import 'package:moodle_monitor/widgets/summary_text.dart';
@@ -223,13 +224,41 @@ class _TasksViewState extends State<TasksView> {
       onRefresh: _onRefresh,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        child: _buildContent(),
+        child: FutureBuilder<List<MoodleEvent>>(
+          future: _getVisibleEvents(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return _buildContentUI(_events ?? []);
+            }
+            return _buildContentUI(snapshot.data ?? []);
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildContent() {
-    final events = _events ?? [];
+  /// Filter events to exclude tasks from hidden courses
+  Future<List<MoodleEvent>> _getVisibleEvents() async {
+    if (_events == null) return [];
+    
+    try {
+      final prefsService = await PreferencesService.getInstance();
+      final hiddenCourses = await prefsService.getHiddenCourses();
+      
+      if (hiddenCourses.isEmpty) {
+        return _events!;
+      }
+      
+      return _events!.where((event) {
+        return !hiddenCourses.contains(event.courseid.toString());
+      }).toList();
+    } catch (e) {
+      // If there's any error loading preferences, return all events
+      return _events!;
+    }
+  }
+
+  Widget _buildContentUI(List<MoodleEvent> events) {
     final groupedEventsByDate = EventDateUtils.groupEventsByDate(events);
     final dayKeys = EventDateUtils.getSortedDayKeys(groupedEventsByDate);
 

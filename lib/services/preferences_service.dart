@@ -52,6 +52,16 @@ class PreferencesService {
     return hiddenCourses.contains(courseId);
   }
 
+  /// Toggle course visibility (hide if visible, show if hidden)
+  Future<bool> toggleCourseVisibility(String courseId) async {
+    final isHidden = await isCourseHidden(courseId);
+    if (isHidden) {
+      return await showCourse(courseId);
+    } else {
+      return await hideCourse(courseId);
+    }
+  }
+
   /// Get theme mode (light, dark, system)
   /// Returns: 'light', 'dark', or 'system'
   String getThemeMode() {
