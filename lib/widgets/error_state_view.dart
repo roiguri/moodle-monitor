@@ -36,9 +36,9 @@ class ErrorStateView extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               errorMessage ?? 'Unknown error',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: Colors.grey,
+                color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey,
               ),
               textAlign: TextAlign.center,
             ),

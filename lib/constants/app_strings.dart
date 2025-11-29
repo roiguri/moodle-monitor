@@ -47,8 +47,13 @@ class AppStrings {
   static const String fetchCoursesError = 'שגיאה בטעינת קורסים';
 
   // Settings
-  static const String settingsTitle = 'הגדרות Moodle';
+  static const String settingsTitle = 'הגדרות';
   static const String settingsDescription = 'הגדר את פרטי ההתחברות שלך ל-Moodle כדי לגשת למטלות ולמועדי ההגשה';
+  static const String appearanceSection = 'מראה';
+  static const String connectionSection = 'פרטי התחברות';
+  static const String themeModeLight = 'בהיר';
+  static const String themeModeDark = 'כהה';
+  static const String themeModeSystem = 'אוטומטי';
   static const String moodleUrlLabel = 'כתובת Moodle';
   static const String moodleUrlHint = 'https://moodle.yourschool.edu';
   static const String moodleTokenLabel = 'טוקן Moodle';
@@ -67,7 +72,7 @@ class AppStrings {
   static const String tokenRequired = 'נא להזין את טוקן Moodle';
   static const String tokenInstructionsTitle = 'איך להשיג את טוקן ה-Moodle';
   static const String tokenInstructions = '1. התחבר לאתר ה-Moodle שלך\n'
-      '2. עבור להעדפות ← חשבון משתמש ← מפתחות אבטחה\n'
+      '2. עבור להעדפות > חשבון משתמש > מפתחות אבטחה\n'
       '3. אפס את הטוקן "Moodle mobile web service"\n'
       '4. העתק את הטוקן החדש שיוצג והדבק אותו למעלה';
 

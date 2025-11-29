@@ -8,7 +8,12 @@ import 'package:moodle_monitor/constants/app_strings.dart';
 /// MainScreen is the primary navigation container
 /// Manages bottom navigation bar and view switching
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  final Function(ThemeMode) onThemeChanged;
+
+  const MainScreen({
+    Key? key,
+    required this.onThemeChanged,
+  }) : super(key: key);
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -99,7 +104,10 @@ class _MainScreenState extends State<MainScreen> {
               onRefreshRequested: (refresh) => _refreshTasks = refresh,
             ),
             const CoursesView(),
-            SettingsView(onCredentialsSaved: _onCredentialsSaved),
+            SettingsView(
+              onCredentialsSaved: _onCredentialsSaved,
+              onThemeChanged: widget.onThemeChanged,
+            ),
           ],
         ),
       ),

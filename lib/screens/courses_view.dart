@@ -215,12 +215,16 @@ class _CoursesViewState extends State<CoursesView> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: isHidden ? Colors.grey[300] : Colors.blue[100],
+                  color: isHidden 
+                      ? Theme.of(context).disabledColor.withOpacity(0.1) 
+                      : Theme.of(context).colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.school,
-                  color: isHidden ? Colors.grey[600] : Colors.blue[700],
+                  color: isHidden 
+                      ? Theme.of(context).disabledColor 
+                      : Theme.of(context).colorScheme.onPrimaryContainer,
                 ),
               ),
               const SizedBox(width: 16),
@@ -235,7 +239,9 @@ class _CoursesViewState extends State<CoursesView> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: isHidden ? Colors.grey[600] : Colors.black87,
+                        color: isHidden 
+                            ? Theme.of(context).disabledColor 
+                            : Theme.of(context).textTheme.titleMedium?.color,
                       ),
                     ),
                     // Course number
@@ -245,7 +251,7 @@ class _CoursesViewState extends State<CoursesView> {
                         CourseNameUtils.extractCourseNumber(course.fullName),
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[600],
+                          color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -257,7 +263,9 @@ class _CoursesViewState extends State<CoursesView> {
               IconButton(
                 icon: Icon(
                   isHidden ? Icons.visibility_off : Icons.visibility,
-                  color: isHidden ? Colors.grey[600] : Colors.blue[600],
+                  color: isHidden 
+                      ? Theme.of(context).disabledColor 
+                      : Theme.of(context).colorScheme.primary,
                 ),
                 tooltip: isHidden ? AppStrings.showCourse : AppStrings.hideCourse,
                 onPressed: () => _toggleCourseVisibility(course.id.toString()),

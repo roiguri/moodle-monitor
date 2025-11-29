@@ -21,7 +21,7 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = _getColorsForPriority(priority);
+    final colors = _getColorsForPriority(context, priority);
     final deadline = DateTime.fromMillisecondsSinceEpoch(event.timeSort * 1000);
     final formattedTime = DateFormat.Hm('he_IL').format(deadline);
     final formattedDate = DateFormat.MMMd('he_IL').format(deadline);
@@ -109,28 +109,30 @@ class EventCard extends StatelessWidget {
     }
   }
 
-  _CardColors _getColorsForPriority(EventPriority priority) {
+  _CardColors _getColorsForPriority(BuildContext context, EventPriority priority) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     switch (priority) {
       case EventPriority.high:
         return _CardColors(
-          background: AppColors.highPriorityBg,
-          border: AppColors.highPriority,
-          text: Colors.black87,
-          accent: AppColors.highPriority,
+          background: isDark ? AppColors.highPriorityBgDark : AppColors.highPriorityBg,
+          border: isDark ? AppColors.highPriorityDark : AppColors.highPriority,
+          text: isDark ? AppColors.textPrimaryDark : Colors.black87,
+          accent: isDark ? AppColors.highPriorityDark : AppColors.highPriority,
         );
       case EventPriority.medium:
         return _CardColors(
-          background: AppColors.mediumPriorityBg,
-          border: AppColors.mediumPriority,
-          text: Colors.black87,
-          accent: AppColors.mediumPriority,
+          background: isDark ? AppColors.mediumPriorityBgDark : AppColors.mediumPriorityBg,
+          border: isDark ? AppColors.mediumPriorityDark : AppColors.mediumPriority,
+          text: isDark ? AppColors.textPrimaryDark : Colors.black87,
+          accent: isDark ? AppColors.mediumPriorityDark : AppColors.mediumPriority,
         );
       case EventPriority.low:
         return _CardColors(
-          background: AppColors.lowPriorityBg,
-          border: AppColors.lowPriority,
-          text: Colors.black87,
-          accent: AppColors.lowPriority,
+          background: isDark ? AppColors.lowPriorityBgDark : AppColors.lowPriorityBg,
+          border: isDark ? AppColors.lowPriorityDark : AppColors.lowPriority,
+          text: isDark ? AppColors.textPrimaryDark : Colors.black87,
+          accent: isDark ? AppColors.lowPriorityDark : AppColors.lowPriority,
         );
     }
   }

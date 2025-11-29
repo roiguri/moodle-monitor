@@ -25,21 +25,26 @@ class ShimmerCoursesLoadingView extends StatelessWidget {
         const SizedBox(height: 24),
         
         // Shimmer course cards
-        ..._buildShimmerCourseCards(5), // Show 5 loading cards
+        ..._buildShimmerCourseCards(context, 5), // Show 5 loading cards
         
         const SizedBox(height: 24),
       ],
     );
   }
 
-  List<Widget> _buildShimmerCourseCards(int count) {
-    return List.generate(count, (index) => _buildShimmerCourseCard());
+  List<Widget> _buildShimmerCourseCards(BuildContext context, int count) {
+    return List.generate(count, (index) => _buildShimmerCourseCard(context));
   }
 
-  Widget _buildShimmerCourseCard() {
+  Widget _buildShimmerCourseCard(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = isDark ? Colors.grey[800]! : Colors.grey[300]!;
+    final highlightColor = isDark ? Colors.grey[700]! : Colors.grey[100]!;
+    final containerColor = isDark ? Colors.grey[850] : Colors.white;
+
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: baseColor,
+      highlightColor: highlightColor,
       child: Card(
         margin: const EdgeInsets.only(bottom: 12),
         elevation: 2,
@@ -55,7 +60,7 @@ class ShimmerCoursesLoadingView extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: containerColor,
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
@@ -70,7 +75,7 @@ class ShimmerCoursesLoadingView extends StatelessWidget {
                       height: 16,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: containerColor,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -80,7 +85,7 @@ class ShimmerCoursesLoadingView extends StatelessWidget {
                       height: 14,
                       width: 120,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: containerColor,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -93,7 +98,7 @@ class ShimmerCoursesLoadingView extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: containerColor,
                   shape: BoxShape.circle,
                 ),
               ),

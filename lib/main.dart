@@ -3,6 +3,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:moodle_monitor/screens/main_screen.dart';
 import 'package:moodle_monitor/services/widget_service.dart';
+import 'package:moodle_monitor/constants/app_theme.dart';
+import 'package:moodle_monitor/services/preferences_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,8 +13,60 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTheme();
+  }
+
+  Future<void> _loadTheme() async {
+    final prefs = await PreferencesService.getInstance();
+    final savedTheme = prefs.getThemeMode();
+    setState(() {
+      _themeMode = _getThemeModeFromString(savedTheme);
+    });
+  }
+
+  ThemeMode _getThemeModeFromString(String theme) {
+    switch (theme) {
+      case 'light':
+        return ThemeMode.light;
+      case 'dark':
+        return ThemeMode.dark;
+      default:
+        return ThemeMode.system;
+    }
+  }
+
+  void _changeTheme(ThemeMode mode) async {
+    setState(() {
+      _themeMode = mode;
+    });
+    
+    final prefs = await PreferencesService.getInstance();
+    String themeString;
+    switch (mode) {
+      case ThemeMode.light:
+        themeString = 'light';
+        break;
+      case ThemeMode.dark:
+        themeString = 'dark';
+        break;
+      default:
+        themeString = 'system';
+    }
+    await prefs.setThemeMode(themeString);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +82,10 @@ class MyApp extends StatelessWidget {
         Locale('en', 'US'), // English, United States
       ],
       locale: const Locale('he', 'IL'),
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
-      ),
-      home: const MainScreen(),
+      theme: AppTheme.getLightTheme(),
+      darkTheme: AppTheme.getDarkTheme(),
+      themeMode: _themeMode,
+      home: MainScreen(onThemeChanged: _changeTheme),
     );
   }
 }

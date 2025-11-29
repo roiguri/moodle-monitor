@@ -63,7 +63,7 @@ class CredentialsRequiredView extends StatelessWidget {
               message,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey[600],
               ),
               textAlign: TextAlign.center,
             ),
@@ -78,14 +78,14 @@ class CredentialsRequiredView extends StatelessWidget {
               ),
               label: Text(buttonLabel),
               style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.black87,
+                foregroundColor: Theme.of(context).textTheme.bodyLarge?.color,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
                   vertical: 16,
                 ),
                 textStyle: const TextStyle(fontSize: 16),
                 side: BorderSide(
-                  color: Colors.grey[300]!,
+                  color: Theme.of(context).dividerColor,
                   width: 1.5,
                 ),
               ),

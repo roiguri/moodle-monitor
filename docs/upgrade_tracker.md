@@ -66,10 +66,10 @@ This document tracks the progress of the Moodle Monitor application upgrade to V
 **Goal**: Implement a theme switcher and polish the UI.
 
 ### Tasks:
-- [ ] Define Themes: Update `lib/constants/app_colors.dart` to include a Dark Mode palette. Define ThemeData for both light and dark modes in `lib/main.dart`.
-- [ ] State Management: Lift the ThemeMode state to main.dart (or use a ValueNotifier/ChangeNotifier).
-- [ ] Settings Toggle: Add a SwitchListTile in SettingsView to toggle between Light/Dark/System modes.
-- [ ] Apply Styling: Ensure all cards, text, and backgrounds in TasksView and CoursesView respond correctly to the active theme.
+- [x] Define Themes: Update `lib/constants/app_colors.dart` to include a Dark Mode palette. Define ThemeData for both light and dark modes in `lib/main.dart`.
+- [x] State Management: Lift the ThemeMode state to main.dart (or use a ValueNotifier/ChangeNotifier).
+- [x] Settings Toggle: Add a SwitchListTile in SettingsView to toggle between Light/Dark/System modes.
+- [x] Apply Styling: Ensure all cards, text, and backgrounds in TasksView and CoursesView respond correctly to the active theme.
 
 ---
 

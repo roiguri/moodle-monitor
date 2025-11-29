@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:moodle_monitor/services/moodle_client.dart';
 import 'package:moodle_monitor/constants/app_strings.dart';
 
+import 'package:moodle_monitor/services/preferences_service.dart';
+
 /// SettingsView allows users to configure app settings
 /// Including Moodle credentials and theme preferences
 class SettingsView extends StatefulWidget {
   final VoidCallback? onCredentialsSaved;
+  final Function(ThemeMode)? onThemeChanged;
 
   const SettingsView({
     Key? key,
     this.onCredentialsSaved,
+    this.onThemeChanged,
   }) : super(key: key);
 
   @override
@@ -21,6 +25,8 @@ class _SettingsViewState extends State<SettingsView> {
   final _urlController = TextEditingController();
   final _tokenController = TextEditingController();
   final _moodleClient = MoodleClient();
+  
+  ThemeMode _currentTheme = ThemeMode.system;
 
   bool _isLoading = false;
   bool _isSaving = false;
@@ -30,6 +36,28 @@ class _SettingsViewState extends State<SettingsView> {
   void initState() {
     super.initState();
     _loadExistingCredentials();
+    _loadTheme();
+  }
+
+  Future<void> _loadTheme() async {
+    final prefs = await PreferencesService.getInstance();
+    final savedTheme = prefs.getThemeMode();
+    if (mounted) {
+      setState(() {
+        _currentTheme = _getThemeModeFromString(savedTheme);
+      });
+    }
+  }
+
+  ThemeMode _getThemeModeFromString(String theme) {
+    switch (theme) {
+      case 'light':
+        return ThemeMode.light;
+      case 'dark':
+        return ThemeMode.dark;
+      default:
+        return ThemeMode.system;
+    }
   }
 
   Future<void> _loadExistingCredentials() async {
@@ -173,14 +201,64 @@ class _SettingsViewState extends State<SettingsView> {
                       fontWeight: FontWeight.bold,
                     ),
               ),
+              const SizedBox(height: 32),
+              
+              // Appearance Section
+              Text(
+                AppStrings.appearanceSection,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: SegmentedButton<ThemeMode>(
+                  segments: const [
+                    ButtonSegment<ThemeMode>(
+                      value: ThemeMode.light,
+                      label: Text(AppStrings.themeModeLight),
+                      icon: Icon(Icons.wb_sunny_outlined),
+                    ),
+                    ButtonSegment<ThemeMode>(
+                      value: ThemeMode.dark,
+                      label: Text(AppStrings.themeModeDark),
+                      icon: Icon(Icons.dark_mode_outlined),
+                    ),
+                    ButtonSegment<ThemeMode>(
+                      value: ThemeMode.system,
+                      label: Text(AppStrings.themeModeSystem),
+                      icon: Icon(Icons.brightness_auto_outlined),
+                    ),
+                  ],
+                  selected: {_currentTheme},
+                  onSelectionChanged: (Set<ThemeMode> newSelection) {
+                    setState(() {
+                      _currentTheme = newSelection.first;
+                    });
+                    widget.onThemeChanged?.call(newSelection.first);
+                  },
+                ),
+              ),
+              
+              const SizedBox(height: 32),
+              const Divider(),
+              const SizedBox(height: 24),
+
+              // Credentials Section
+              Text(
+                AppStrings.connectionSection,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
               const SizedBox(height: 8),
               Text(
                 AppStrings.settingsDescription,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
+
               TextFormField(
                 controller: _urlController,
                 decoration: const InputDecoration(
@@ -234,10 +312,10 @@ class _SettingsViewState extends State<SettingsView> {
                 child: OutlinedButton.icon(
                   onPressed: _isSaving ? null : _saveCredentials,
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.black87,
+                    foregroundColor: Theme.of(context).colorScheme.primary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     side: BorderSide(
-                      color: Colors.grey[300]!,
+                      color: Theme.of(context).dividerColor,
                       width: 1.5,
                     ),
                   ),
@@ -247,10 +325,10 @@ class _SettingsViewState extends State<SettingsView> {
                           width: 18,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Colors.blue[600],
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         )
-                      : Icon(Icons.check_circle, size: 20, color: Colors.blue[600]),
+                      : const Icon(Icons.check_circle, size: 20),
                   label: const Text(
                     AppStrings.saveButton,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
@@ -263,14 +341,14 @@ class _SettingsViewState extends State<SettingsView> {
                 child: OutlinedButton.icon(
                   onPressed: _clearCredentials,
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.black87,
+                    foregroundColor: Theme.of(context).colorScheme.error,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     side: BorderSide(
-                      color: Colors.grey[300]!,
+                      color: Theme.of(context).dividerColor,
                       width: 1.5,
                     ),
                   ),
-                  icon: Icon(Icons.delete_outline, size: 20, color: Colors.red[600]),
+                  icon: const Icon(Icons.delete_outline, size: 20),
                   label: const Text(
                     AppStrings.clearButton,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
