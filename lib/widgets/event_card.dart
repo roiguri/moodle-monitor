@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:moodle_monitor/models/moodle_event.dart';
 import 'package:moodle_monitor/utils/date_utils.dart';
 import 'package:moodle_monitor/constants/app_colors.dart';
 import 'package:moodle_monitor/constants/text_styles.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EventCard extends StatelessWidget {
   final MoodleEvent event;
@@ -39,56 +41,72 @@ class EventCard extends StatelessWidget {
           ),
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          crossAxisAlignment: showCourse
-            ? CrossAxisAlignment.start
-            : CrossAxisAlignment.center,
-          children: [
-            // Event name and course info (switched order)
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
+      child: InkWell(
+        onTap: () => _launchUrl(event.url),
+        borderRadius: BorderRadius.circular(12),
+        splashColor: colors.border.withOpacity(0.2),
+        highlightColor: colors.border.withOpacity(0.1),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            crossAxisAlignment: showCourse
+              ? CrossAxisAlignment.start
+              : CrossAxisAlignment.center,
+            children: [
+              // Event name and course info (switched order)
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      event.name,
+                      style: TextStyles.cardCourse.copyWith(
+                        color: colors.text,
+                      ),
+                    ),
+                    if (showCourse) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        event.course,
+                        style: TextStyles.cardEvent,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Time info
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    event.name,
-                    style: TextStyles.cardCourse.copyWith(
-                      color: colors.text,
+                    formattedTime,
+                    style: TextStyles.cardTime.copyWith(
+                      color: colors.accent,
                     ),
                   ),
-                  if (showCourse) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      event.course,
-                      style: TextStyles.cardEvent,
-                    ),
-                  ],
+                  Text(
+                    formattedDate,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
                 ],
               ),
-            ),
-            const SizedBox(width: 12),
-            // Time info
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  formattedTime,
-                  style: TextStyles.cardTime.copyWith(
-                    color: colors.accent,
-                  ),
-                ),
-                Text(
-                  formattedDate,
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Future<void> _launchUrl(String urlString) async {
+    // Provide haptic feedback when tapping
+    HapticFeedback.lightImpact();
+    
+    final Uri url = Uri.parse(urlString);
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      // TODO: consider showing a toast notification on error.
+    }
   }
 
   _CardColors _getColorsForPriority(EventPriority priority) {
