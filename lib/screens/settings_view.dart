@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moodle_monitor/services/moodle_client.dart';
 import 'package:moodle_monitor/constants/app_strings.dart';
+import 'package:moodle_monitor/utils/snackbar_helper.dart';
 
 import 'package:moodle_monitor/services/preferences_service.dart';
 
@@ -105,12 +106,10 @@ class _SettingsViewState extends State<SettingsView> {
           _isSaving = false;
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(AppStrings.credentialsSaved),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
-          ),
+        SnackbarHelper.showSuccess(
+          context,
+          AppStrings.credentialsSaved,
+          duration: const Duration(seconds: 2),
         );
 
         // Notify parent that credentials were saved
@@ -122,12 +121,10 @@ class _SettingsViewState extends State<SettingsView> {
           _isSaving = false;
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${AppStrings.saveError}: $e'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 4),
-          ),
+        SnackbarHelper.showError(
+          context,
+          '${AppStrings.saveError}: $e',
+          duration: const Duration(seconds: 4),
         );
       }
     }
@@ -161,11 +158,10 @@ class _SettingsViewState extends State<SettingsView> {
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(AppStrings.credentialsCleared),
-            duration: Duration(seconds: 2),
-          ),
+        SnackbarHelper.showInfo(
+          context,
+          AppStrings.credentialsCleared,
+          duration: const Duration(seconds: 2),
         );
       }
     }

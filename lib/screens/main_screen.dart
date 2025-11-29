@@ -4,6 +4,7 @@ import 'package:moodle_monitor/screens/courses_view.dart';
 import 'package:moodle_monitor/screens/settings_view.dart';
 import 'package:moodle_monitor/services/moodle_client.dart';
 import 'package:moodle_monitor/constants/app_strings.dart';
+import 'package:moodle_monitor/utils/snackbar_helper.dart';
 
 /// MainScreen is the primary navigation container
 /// Manages bottom navigation bar and view switching
@@ -63,14 +64,9 @@ class _MainScreenState extends State<MainScreen> {
       if (!hasCredentials) {
         Future.delayed(Duration.zero, () {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Please configure your Moodle credentials to get started',
-                ),
-                duration: Duration(seconds: 4),
-                backgroundColor: Colors.orange,
-              ),
+            SnackbarHelper.showWarning(
+              context,
+              AppStrings.firstLaunchMessage,
             );
           }
         });
@@ -115,6 +111,9 @@ class _MainScreenState extends State<MainScreen> {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF1C2024) // charcoal-bg from design
+              : const Color(0xFFF0F2F5), // Light grey for contrast
           border: Border(
             top: BorderSide(
               color: Theme.of(context).brightness == Brightness.dark
@@ -128,9 +127,8 @@ class _MainScreenState extends State<MainScreen> {
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Theme.of(context).brightness == Brightness.dark
-              ? const Color(0xFF1C2024) // charcoal-bg from design
-              : Colors.white,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
           selectedItemColor: Theme.of(context).brightness == Brightness.dark
               ? Colors.white
               : Theme.of(context).primaryColor,
@@ -150,33 +148,33 @@ class _MainScreenState extends State<MainScreen> {
           items: [
             BottomNavigationBarItem(
               icon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
+                padding: EdgeInsets.only(top: 4, bottom: 4),
                 child: Icon(Icons.dashboard_outlined),
               ),
               activeIcon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
+                padding: EdgeInsets.only(top: 4, bottom: 4),
                 child: Icon(Icons.dashboard),
               ),
               label: AppStrings.navTasks,
             ),
             BottomNavigationBarItem(
               icon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
+                padding: EdgeInsets.only(top: 4, bottom: 4),
                 child: Icon(Icons.school_outlined),
               ),
               activeIcon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
+                padding: EdgeInsets.only(top: 4, bottom: 4),
                 child: Icon(Icons.school),
               ),
               label: AppStrings.navCourses,
             ),
             BottomNavigationBarItem(
               icon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
+                padding: EdgeInsets.only(top: 4, bottom: 4),
                 child: Icon(Icons.settings_outlined),
               ),
               activeIcon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
+                padding: EdgeInsets.only(top: 4, bottom: 4),
                 child: Icon(Icons.settings),
               ),
               label: AppStrings.navSettings,
