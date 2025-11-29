@@ -1,9 +1,18 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:moodie/models/moodle_event.dart';
 import 'package:moodie/services/moodle_client.dart';
 import 'package:moodie/utils/date_utils.dart';
 import 'package:workmanager/workmanager.dart';
+
+// 1. Top-level function (Outside any class)
+@pragma('vm:entry-point')
+Future<void> backgroundCallback(Uri? uri) async {
+  if (uri?.host == 'refresh_click') {
+    await WidgetService.updateWidget();
+  }
+}
 
 class WidgetService {
   static const String _widgetName = 'MoodleWidgetProvider';
@@ -11,6 +20,9 @@ class WidgetService {
 
   /// Initialize the widget service
   static Future<void> initialize() async {
+    // 2. Register the callback
+    await HomeWidget.registerInteractivityCallback(backgroundCallback);
+
     // Note: App Group ID is only needed for iOS
     // For Android, home_widget uses SharedPreferences automatically
     await _registerBackgroundTask();
