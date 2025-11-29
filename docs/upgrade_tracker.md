@@ -13,13 +13,13 @@ This document tracks the progress of the Moodle Monitor application upgrade to V
 **Goal**: Establish the new navigation structure and refactor the existing home screen.
 
 ### Tasks:
-- [ ] Request design plans for navigation bar
-- [ ] Create TasksView: Refactor the existing HomeScreen content (deadlines list, greeting) into a new widget `lib/screens/tasks_view.dart`. Remove the Scaffold from this widget so it can be embedded.
-- [ ] Create CoursesView & SettingsView: Create placeholder widgets for these two new screens.
-- [ ] Implement MainScreen: Create `lib/screens/main_screen.dart`.
-  - [ ] Implement a Scaffold with a BottomNavigationBar (or the custom App Bar from the design).
-  - [ ] Set up state (`_selectedIndex`) to switch between the three views.
-- [ ] Update Entry Point: Modify `lib/main.dart` to point to MainScreen instead of HomeScreen.
+- [x] Request design plans for navigation bar
+- [x] Create TasksView: Refactor the existing HomeScreen content (deadlines list, greeting) into a new widget `lib/screens/tasks_view.dart`. Remove the Scaffold from this widget so it can be embedded.
+- [x] Create CoursesView & SettingsView: Create placeholder widgets for these two new screens.
+- [x] Implement MainScreen: Create `lib/screens/main_screen.dart`.
+  - [x] Implement a Scaffold with a BottomNavigationBar (or the custom App Bar from the design).
+  - [x] Set up state (`_selectedIndex`) to switch between the three views.
+- [x] Update Entry Point: Modify `lib/main.dart` to point to MainScreen instead of HomeScreen.
 
 ---
 
