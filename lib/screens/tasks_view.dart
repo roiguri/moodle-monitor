@@ -7,15 +7,24 @@ import 'package:moodle_monitor/widgets/summary_text.dart';
 import 'package:moodle_monitor/widgets/event_section.dart';
 import 'package:moodle_monitor/widgets/shimmer_loading_view.dart';
 import 'package:moodle_monitor/widgets/error_state_view.dart';
+import 'package:moodle_monitor/widgets/credentials_required_view.dart';
 import 'package:moodle_monitor/utils/date_utils.dart';
 import 'package:moodle_monitor/utils/course_utils.dart';
+import 'package:moodle_monitor/utils/snackbar_helper.dart';
 import '../constants/app_strings.dart';
 import '../widgets/view_switcher.dart';
 
 /// TasksView displays the user's deadlines and assignments
 /// This is the main dashboard view showing upcoming tasks grouped by date or course
 class TasksView extends StatefulWidget {
-  const TasksView({Key? key}) : super(key: key);
+  final VoidCallback? onNavigateToSettings;
+  final void Function(VoidCallback refresh)? onRefreshRequested;
+
+  const TasksView({
+    Key? key,
+    this.onNavigateToSettings,
+    this.onRefreshRequested,
+  }) : super(key: key);
 
   @override
   State<TasksView> createState() => _TasksViewState();
@@ -27,6 +36,7 @@ class _TasksViewState extends State<TasksView> {
   bool _isLoading = true;
   List<MoodleEvent>? _events;
   String? _errorMessage;
+  bool _isAuthError = false;
   ViewType _selectedView = ViewType.day;
 
   void _onViewChanged(ViewType viewType) {
@@ -39,6 +49,8 @@ class _TasksViewState extends State<TasksView> {
   void initState() {
     super.initState();
     _moodleClient = MoodleClient();
+    // Register refresh callback
+    widget.onRefreshRequested?.call(_loadDeadlines);
     _loadDeadlines();
   }
 
@@ -46,6 +58,7 @@ class _TasksViewState extends State<TasksView> {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
+      _isAuthError = false;
     });
 
     try {
@@ -54,17 +67,36 @@ class _TasksViewState extends State<TasksView> {
         setState(() {
           _events = events;
           _isLoading = false;
+          _errorMessage = null;
+          _isAuthError = false; // Explicitly clear auth error on success
         });
         // Update widget after loading events
         WidgetService.updateWidget();
+      }
+    } on AuthException catch (e) {
+      // Handle missing/invalid credentials gracefully
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+          _isAuthError = true;
+        });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
           _errorMessage = e.toString();
           _isLoading = false;
+          _isAuthError = false;
         });
-        _showErrorSnackBar();
+        SnackbarHelper.showError(
+          context,
+          AppStrings.loadError,
+          action: SnackBarAction(
+            label: AppStrings.retryButton,
+            onPressed: _loadDeadlines,
+          ),
+        );
       }
     }
   }
@@ -76,44 +108,74 @@ class _TasksViewState extends State<TasksView> {
         setState(() {
           _events = events;
           _errorMessage = null;
+          _isAuthError = false; // Clear auth error on successful refresh
         });
         // Update widget after refreshing
         WidgetService.updateWidget();
+      }
+    } on AuthException catch (e) {
+      // Handle missing/invalid credentials during refresh
+      if (mounted) {
+        // Don't change loading state during refresh
+        setState(() {
+          _errorMessage = e.toString();
+          _isAuthError = true;
+        });
+
+        // Check if credentials actually exist to differentiate the error
+        final hasCredentials = await _moodleClient.hasCredentials();
+        
+        if (!hasCredentials) {
+          // Scenario 1: Credentials were removed/cleared
+          if (_events != null && _events!.isNotEmpty) {
+            // Show warning - keep cached tasks visible
+            SnackbarHelper.showWarning(
+              context,
+              AppStrings.credentialsMissing,
+              action: SnackBarAction(
+                label: AppStrings.updateCredentialsButton,
+                onPressed: widget.onNavigateToSettings ?? () {},
+              ),
+            );
+          } else {
+            // No cached data and no credentials
+            SnackbarHelper.showWarning(
+              context,
+              AppStrings.firstLaunchMessage,
+              action: SnackBarAction(
+                label: AppStrings.goToSettingsButton,
+                onPressed: widget.onNavigateToSettings ?? () {},
+              ),
+            );
+          }
+        } else {
+          // Scenario 2: Credentials exist but are invalid/expired
+          SnackbarHelper.showError(
+            context,
+            AppStrings.invalidCredentials,
+            action: SnackBarAction(
+              label: AppStrings.updateCredentialsButton,
+              onPressed: widget.onNavigateToSettings ?? () {},
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
         setState(() {
           _errorMessage = e.toString();
+          _isAuthError = false;
         });
-        _showRefreshErrorSnackBar();
+        SnackbarHelper.showError(
+          context,
+          AppStrings.refreshError,
+          action: SnackBarAction(
+            label: AppStrings.retryButton,
+            onPressed: _onRefresh,
+          ),
+        );
       }
     }
-  }
-
-  void _showErrorSnackBar() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text(AppStrings.loadError),
-        action: SnackBarAction(
-          label: AppStrings.retryButton,
-          onPressed: _loadDeadlines,
-        ),
-        duration: const Duration(seconds: 6),
-      ),
-    );
-  }
-
-  void _showRefreshErrorSnackBar() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text(AppStrings.refreshError),
-        action: SnackBarAction(
-          label: AppStrings.retryButton,
-          onPressed: _onRefresh,
-        ),
-        duration: const Duration(seconds: 4),
-      ),
-    );
   }
 
   @override
@@ -124,6 +186,30 @@ class _TasksViewState extends State<TasksView> {
   Widget _buildBody() {
     if (_isLoading) {
       return const ShimmerLoadingView();
+    }
+
+    // Show credentials required view if it's an auth error
+    if (_isAuthError && _events == null) {
+      // We need to determine if credentials are missing or invalid
+      // This requires async check, so we use FutureBuilder
+      return FutureBuilder<bool>(
+        future: _moodleClient.hasCredentials(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const ShimmerLoadingView();
+          }
+          
+          final hasCredentials = snapshot.data ?? false;
+          final errorType = hasCredentials
+              ? CredentialsErrorType.invalid
+              : CredentialsErrorType.missing;
+          
+          return CredentialsRequiredView(
+            onGoToSettings: widget.onNavigateToSettings,
+            errorType: errorType,
+          );
+        },
+      );
     }
 
     if (_errorMessage != null && _events == null) {

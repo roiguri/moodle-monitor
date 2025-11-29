@@ -28,17 +28,17 @@ This document tracks the progress of the Moodle Monitor application upgrade to V
 **Goal**: Allow users to configure the app without editing code/env files.
 
 ### Tasks:
-- [ ] Add Dependencies: Add `shared_preferences` (for UI settings) and ensure `flutter_secure_storage` is configured (for the token) in `pubspec.yaml`.
-- [ ] Create Settings UI: Implement `lib/screens/settings_view.dart` with:
-  - [ ] TextField for Moodle URL.
-  - [ ] TextField for Moodle Token.
-  - [ ] "Save" button to persist these credentials to Secure Storage.
-  - [ ] Input validation (check for empty fields).
-- [ ] Refactor MoodleClient: Modify `lib/services/moodle_client.dart`:
-  - [ ] Remove strict dependency on dotenv.
-  - [ ] Update fetchDeadlines to read Token/URL from flutter_secure_storage.
-  - [ ] Throw a specific "AuthError" if credentials are missing.
-- [ ] Handle Auth State: Update main.dart or MainScreen to check for credentials on launch. Redirect to SettingsView (or show a setup prompt) if the token is missing.
+- [x] Add Dependencies: Add `shared_preferences` (for UI settings) and ensure `flutter_secure_storage` is configured (for the token) in `pubspec.yaml`.
+- [x] Create Settings UI: Implement `lib/screens/settings_view.dart` with:
+  - [x] TextField for Moodle URL.
+  - [x] TextField for Moodle Token.
+  - [x] "Save" button to persist these credentials to Secure Storage.
+  - [x] Input validation (check for empty fields).
+- [x] Refactor MoodleClient: Modify `lib/services/moodle_client.dart`:
+  - [x] Remove strict dependency on dotenv.
+  - [x] Update fetchDeadlines to read Token/URL from flutter_secure_storage.
+  - [x] Throw a specific "AuthError" if credentials are missing.
+- [x] Handle Auth State: Update main.dart or MainScreen to check for credentials on launch. Redirect to SettingsView (or show a setup prompt) if the token is missing.
 
 ---
 
