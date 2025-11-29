@@ -11,6 +11,11 @@ class ShimmerLoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = isDark ? Colors.grey[800]! : Colors.grey[300]!;
+    final highlightColor = isDark ? Colors.grey[700]! : Colors.grey[100]!;
+    final containerColor = isDark ? Colors.grey[850] : Colors.white;
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,28 +26,33 @@ class ShimmerLoadingView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
+              baseColor: baseColor,
+              highlightColor: highlightColor,
               child: Container(
                 height: 16,
                 width: 200,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: containerColor,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
             ),
           ),
-          _buildShimmerSection(AppStrings.today, EventPriority.high, 2),
-          _buildShimmerSection(AppStrings.tomorrow, EventPriority.medium, 2),
-          _buildShimmerSection(AppStrings.next7Days, EventPriority.low, 1),
+          _buildShimmerSection(context, AppStrings.today, EventPriority.high, 2),
+          _buildShimmerSection(context, AppStrings.tomorrow, EventPriority.medium, 2),
+          _buildShimmerSection(context, AppStrings.next7Days, EventPriority.low, 1),
           const SizedBox(height: 24),
         ],
       ),
     );
   }
 
-  Widget _buildShimmerSection(String title, EventPriority priority, int count) {
+  Widget _buildShimmerSection(BuildContext context, String title, EventPriority priority, int count) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = isDark ? Colors.grey[800]! : Colors.grey[300]!;
+    final highlightColor = isDark ? Colors.grey[700]! : Colors.grey[100]!;
+    final containerColor = isDark ? Colors.grey[850] : Colors.white;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -50,13 +60,13 @@ class ShimmerLoadingView extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
           child: Center(
             child: Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
+              baseColor: baseColor,
+              highlightColor: highlightColor,
               child: Container(
                 height: 18,
                 width: 80,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: containerColor,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
