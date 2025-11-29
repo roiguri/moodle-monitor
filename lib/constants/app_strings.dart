@@ -70,6 +70,13 @@ class AppStrings {
   static const String urlRequired = 'נא להזין את כתובת Moodle';
   static const String urlInvalid = 'הכתובת חייבת להתחיל ב-http:// או https://';
   static const String tokenRequired = 'נא להזין את טוקן Moodle';
+  
+  // Validation messages
+  static const String validatingCredentials = 'מאמת פרטי התחברות...';
+  static const String validationConnectionError = 'לא ניתן להתחבר ל-Moodle. נא לבדוק את כתובת ה-URL והחיבור לאינטרנט';
+  static const String validationTimeout = 'תם הזמן לחיבור. נא לבדוק את כתובת ה-URL';
+  static const String validationInvalidToken = 'הטוקן שגוי או פג תוקף.';
+  
   static const String tokenInstructionsTitle = 'איך להשיג את טוקן ה-Moodle';
   static const String tokenInstructions = '1. התחבר לאתר ה-Moodle שלך\n'
       '2. עבור להעדפות > חשבון משתמש > מפתחות אבטחה\n'

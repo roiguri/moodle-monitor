@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -59,6 +60,40 @@ class MoodleClient {
   Future<void> clearCredentials() async {
     await _secureStorage.delete(key: _keyMoodleUrl);
     await _secureStorage.delete(key: _keyMoodleToken);
+  }
+
+  /// Validate Moodle credentials by testing the token against the API
+  /// Returns true if credentials are valid, throws AuthException if invalid
+  Future<bool> validateCredentials({
+    required String url,
+    required String token,
+  }) async {
+    try {
+      final response = await _httpClient.get(Uri.parse(
+        '$url/webservice/rest/server.php?wstoken=$token&wsfunction=core_webservice_get_site_info&moodlewsrestformat=json',
+      )).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body);
+        
+        // Check for Moodle error response
+        if (body is Map && body.containsKey('exception')) {
+          throw AuthException('Invalid credentials: ${body['message'] ?? 'Unknown error'}');
+        }
+        
+        // Successful validation
+        return true;
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        throw AuthException('Invalid Moodle credentials. Please check your token and URL.');
+      } else {
+        throw Exception('Failed to validate credentials: HTTP ${response.statusCode}');
+      }
+    } on TimeoutException {
+      throw Exception('Connection timeout. Please check your Moodle URL.');
+    } catch (e) {
+      if (e is AuthException) rethrow;
+      throw Exception('Failed to connect to Moodle: $e');
+    }
   }
 
   Future<List<MoodleEvent>> fetchDeadlines() async {

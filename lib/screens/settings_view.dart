@@ -32,6 +32,10 @@ class _SettingsViewState extends State<SettingsView> {
   bool _isLoading = false;
   bool _isSaving = false;
   bool _obscureToken = true;
+  
+  // Validation error states
+  bool _hasUrlError = false;
+  bool _hasTokenError = false;
 
   @override
   void initState() {
@@ -99,6 +103,10 @@ class _SettingsViewState extends State<SettingsView> {
       final url = _urlController.text.trim();
       final token = _tokenController.text.trim();
 
+      // Validate credentials before saving
+      await _moodleClient.validateCredentials(url: url, token: token);
+
+      // Only save if validation succeeded
       await _moodleClient.saveCredentials(url: url, token: token);
 
       if (mounted) {
@@ -115,15 +123,43 @@ class _SettingsViewState extends State<SettingsView> {
         // Notify parent that credentials were saved
         widget.onCredentialsSaved?.call();
       }
-    } catch (e) {
+    } on AuthException {
+      // Handle invalid credentials with user-friendly message
       if (mounted) {
         setState(() {
           _isSaving = false;
+          _hasUrlError = false;
+          _hasTokenError = true; // Mark token field as invalid
         });
 
         SnackbarHelper.showError(
           context,
-          '${AppStrings.saveError}: $e',
+          AppStrings.validationInvalidToken,
+          duration: const Duration(seconds: 4),
+        );
+      }
+    } catch (e) {
+      // Handle other errors (network, timeout, etc.)
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+          _hasUrlError = true; // Mark URL field as invalid
+          _hasTokenError = false;
+        });
+
+        // Determine the appropriate error message
+        String errorMessage;
+        if (e.toString().contains('timeout') || e.toString().contains('Connection timeout')) {
+          errorMessage = AppStrings.validationTimeout;
+        } else if (e.toString().contains('connect') || e.toString().contains('SocketException')) {
+          errorMessage = AppStrings.validationConnectionError;
+        } else {
+          errorMessage = AppStrings.validationConnectionError;
+        }
+
+        SnackbarHelper.showError(
+          context,
+          errorMessage,
           duration: const Duration(seconds: 4),
         );
       }
@@ -257,13 +293,31 @@ class _SettingsViewState extends State<SettingsView> {
 
               TextFormField(
                 controller: _urlController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: AppStrings.moodleUrlLabel,
                   hintText: AppStrings.moodleUrlHint,
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.link),
+                  border: const OutlineInputBorder(),
+                  enabledBorder: _hasUrlError
+                      ? OutlineInputBorder(
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 2),
+                        )
+                      : null,
+                  focusedBorder: _hasUrlError
+                      ? OutlineInputBorder(
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 2),
+                        )
+                      : null,
+                  prefixIcon: const Icon(Icons.link),
                 ),
                 keyboardType: TextInputType.url,
+                onChanged: (_) {
+                  // Clear error state when user starts typing
+                  if (_hasUrlError) {
+                    setState(() {
+                      _hasUrlError = false;
+                    });
+                  }
+                },
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return AppStrings.urlRequired;
@@ -282,6 +336,16 @@ class _SettingsViewState extends State<SettingsView> {
                   labelText: AppStrings.moodleTokenLabel,
                   hintText: AppStrings.moodleTokenHint,
                   border: const OutlineInputBorder(),
+                  enabledBorder: _hasTokenError
+                      ? OutlineInputBorder(
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 2),
+                        )
+                      : null,
+                  focusedBorder: _hasTokenError
+                      ? OutlineInputBorder(
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 2),
+                        )
+                      : null,
                   prefixIcon: const Icon(Icons.vpn_key),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -295,6 +359,14 @@ class _SettingsViewState extends State<SettingsView> {
                   ),
                 ),
                 obscureText: _obscureToken,
+                onChanged: (_) {
+                  // Clear error state when user starts typing
+                  if (_hasTokenError) {
+                    setState(() {
+                      _hasTokenError = false;
+                    });
+                  }
+                },
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return AppStrings.tokenRequired;
