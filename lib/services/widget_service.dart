@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:home_widget/home_widget.dart';
-import 'package:moodle_monitor/models/moodle_event.dart';
-import 'package:moodle_monitor/services/moodle_client.dart';
-import 'package:moodle_monitor/utils/date_utils.dart';
+import 'package:moodie/models/moodle_event.dart';
+import 'package:moodie/services/moodle_client.dart';
+import 'package:moodie/utils/date_utils.dart';
 import 'package:workmanager/workmanager.dart';
 
 class WidgetService {

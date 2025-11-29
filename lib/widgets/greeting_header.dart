@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:moodle_monitor/utils/greeting_helper.dart';
-import 'package:moodle_monitor/constants/text_styles.dart';
+import 'package:moodie/utils/greeting_helper.dart';
+import 'package:moodie/constants/text_styles.dart';
 
 class GreetingHeader extends StatelessWidget {
   final Widget? trailingWidget;

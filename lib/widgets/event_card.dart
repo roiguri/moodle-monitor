@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:moodle_monitor/models/moodle_event.dart';
-import 'package:moodle_monitor/utils/date_utils.dart';
-import 'package:moodle_monitor/constants/app_colors.dart';
-import 'package:moodle_monitor/constants/text_styles.dart';
+import 'package:moodie/models/moodle_event.dart';
+import 'package:moodie/utils/date_utils.dart';
+import 'package:moodie/constants/app_colors.dart';
+import 'package:moodie/constants/text_styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EventCard extends StatelessWidget {

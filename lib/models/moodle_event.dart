@@ -1,4 +1,4 @@
-import 'package:moodle_monitor/utils/course_name_utils.dart';
+import 'package:moodie/utils/course_name_utils.dart';
 
 class MoodleEvent {
   final String name;

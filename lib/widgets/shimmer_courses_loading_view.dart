@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:moodle_monitor/constants/app_strings.dart';
+import 'package:moodie/constants/app_strings.dart';
 
 /// Shimmer loading view specifically for the CoursesView
 /// Matches the courses page layout with centered title and course cards

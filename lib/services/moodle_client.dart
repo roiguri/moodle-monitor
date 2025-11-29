@@ -3,8 +3,8 @@ import 'dart:async';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:moodle_monitor/models/moodle_event.dart';
-import 'package:moodle_monitor/models/moodle_course.dart';
+import 'package:moodie/models/moodle_event.dart';
+import 'package:moodie/models/moodle_course.dart';
 
 /// Custom exception for authentication/credential errors
 class AuthException implements Exception {

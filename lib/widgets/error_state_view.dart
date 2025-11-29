@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moodle_monitor/constants/app_strings.dart';
+import 'package:moodie/constants/app_strings.dart';
 
 class ErrorStateView extends StatelessWidget {
   final String? errorMessage;

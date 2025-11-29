@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:moodle_monitor/screens/main_screen.dart';
-import 'package:moodle_monitor/services/widget_service.dart';
-import 'package:moodle_monitor/constants/app_theme.dart';
-import 'package:moodle_monitor/services/preferences_service.dart';
+import 'package:moodie/screens/main_screen.dart';
+import 'package:moodie/services/widget_service.dart';
+import 'package:moodie/constants/app_theme.dart';
+import 'package:moodie/services/preferences_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('he_IL', null);
   await WidgetService.initialize();
-  runApp(const MyApp());
+  runApp(const MoodieApp());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+class MoodieApp extends StatefulWidget {
+  const MoodieApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<MoodieApp> createState() => _MoodieAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MoodieAppState extends State<MoodieApp> {
   ThemeMode _themeMode = ThemeMode.system;
 
   @override
@@ -71,7 +71,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Moodle Monitor',
+      title: 'Moodie',
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:moodle_monitor/services/moodle_client.dart';
-import 'package:moodle_monitor/constants/app_strings.dart';
-import 'package:moodle_monitor/utils/snackbar_helper.dart';
+import 'package:moodie/services/moodle_client.dart';
+import 'package:moodie/constants/app_strings.dart';
+import 'package:moodie/utils/snackbar_helper.dart';
 
-import 'package:moodle_monitor/services/preferences_service.dart';
+import 'package:moodie/services/preferences_service.dart';
 
 /// SettingsView allows users to configure app settings
 /// Including Moodle credentials and theme preferences

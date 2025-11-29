@@ -1,5 +1,5 @@
-import 'package:moodle_monitor/models/moodle_event.dart';
-import 'package:moodle_monitor/constants/app_strings.dart';
+import 'package:moodie/models/moodle_event.dart';
+import 'package:moodie/constants/app_strings.dart';
 
 class EventCounter {
   static int countEventsThisWeek(List<MoodleEvent> events) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:moodle_monitor/models/moodle_event.dart';
-import 'package:moodle_monitor/utils/event_counter.dart';
+import 'package:moodie/models/moodle_event.dart';
+import 'package:moodie/utils/event_counter.dart';
 
 class SummaryText extends StatelessWidget {
   final List<MoodleEvent> allEvents;

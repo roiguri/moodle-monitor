@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:moodle_monitor/constants/app_strings.dart';
-import 'package:moodle_monitor/models/moodle_course.dart';
-import 'package:moodle_monitor/services/moodle_client.dart';
-import 'package:moodle_monitor/services/preferences_service.dart';
-import 'package:moodle_monitor/utils/snackbar_helper.dart';
-import 'package:moodle_monitor/utils/course_name_utils.dart';
-import 'package:moodle_monitor/widgets/shimmer_courses_loading_view.dart';
-import 'package:moodle_monitor/widgets/error_state_view.dart';
-import 'package:moodle_monitor/widgets/credentials_required_view.dart';
+import 'package:moodie/constants/app_strings.dart';
+import 'package:moodie/models/moodle_course.dart';
+import 'package:moodie/services/moodle_client.dart';
+import 'package:moodie/services/preferences_service.dart';
+import 'package:moodie/utils/snackbar_helper.dart';
+import 'package:moodie/utils/course_name_utils.dart';
+import 'package:moodie/widgets/shimmer_courses_loading_view.dart';
+import 'package:moodie/widgets/error_state_view.dart';
+import 'package:moodie/widgets/credentials_required_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// CoursesView displays all user's courses with hide/show functionality

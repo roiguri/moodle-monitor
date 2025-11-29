@@ -1,4 +1,4 @@
-package com.example.moodle_monitor
+package app.moodie
 
 import io.flutter.embedding.android.FlutterActivity
 

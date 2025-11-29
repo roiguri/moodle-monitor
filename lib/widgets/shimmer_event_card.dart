@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:moodle_monitor/utils/date_utils.dart';
-import 'package:moodle_monitor/constants/app_colors.dart';
+import 'package:moodie/utils/date_utils.dart';
+import 'package:moodie/constants/app_colors.dart';
 
 class ShimmerEventCard extends StatelessWidget {
   final EventPriority priority;

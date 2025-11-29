@@ -1,4 +1,4 @@
-import 'package:moodle_monitor/models/moodle_event.dart';
+import 'package:moodie/models/moodle_event.dart';
 
 class CourseUtils {
   static Map<String, List<MoodleEvent>> groupEventsByCourse(List<MoodleEvent> events) {

@@ -1,4 +1,4 @@
-package com.example.moodle_monitor
+package app.moodie
 
 import android.content.Context
 import android.content.Intent

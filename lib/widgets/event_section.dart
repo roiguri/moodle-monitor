@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:moodle_monitor/models/moodle_event.dart';
-import 'package:moodle_monitor/utils/date_utils.dart';
-import 'package:moodle_monitor/widgets/event_card.dart';
-import 'package:moodle_monitor/constants/text_styles.dart';
+import 'package:moodie/models/moodle_event.dart';
+import 'package:moodie/utils/date_utils.dart';
+import 'package:moodie/widgets/event_card.dart';
+import 'package:moodie/constants/text_styles.dart';
 
 class EventSection extends StatelessWidget {
   final String title;

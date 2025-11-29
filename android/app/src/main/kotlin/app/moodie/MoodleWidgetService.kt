@@ -1,4 +1,4 @@
-package com.example.moodle_monitor
+package app.moodie
 
 import android.content.Intent
 import android.widget.RemoteViewsService

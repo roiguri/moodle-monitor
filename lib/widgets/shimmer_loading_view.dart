@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:moodle_monitor/widgets/greeting_header.dart';
-import 'package:moodle_monitor/widgets/shimmer_event_card.dart';
-import 'package:moodle_monitor/widgets/view_switcher.dart';
-import 'package:moodle_monitor/utils/date_utils.dart';
-import 'package:moodle_monitor/constants/app_strings.dart';
+import 'package:moodie/widgets/greeting_header.dart';
+import 'package:moodie/widgets/shimmer_event_card.dart';
+import 'package:moodie/widgets/view_switcher.dart';
+import 'package:moodie/utils/date_utils.dart';
+import 'package:moodie/constants/app_strings.dart';
 
 class ShimmerLoadingView extends StatelessWidget {
   const ShimmerLoadingView({Key? key}) : super(key: key);
