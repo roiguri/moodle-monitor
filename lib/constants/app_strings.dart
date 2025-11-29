@@ -29,6 +29,11 @@ class AppStrings {
   static const String updateCredentialsButton = 'עדכן פרטי התחברות';
   static const String invalidCredentials = 'פרטי ההתחברות שגויים. נא לבדוק את הטוקן והכתובת';
 
+  // Navigation
+  static const String navTasks = 'משימות';
+  static const String navCourses = 'קורסים';
+  static const String navSettings = 'הגדרות';
+
   // Settings
   static const String settingsTitle = 'הגדרות Moodle';
   static const String settingsDescription = 'הגדר את פרטי ההתחברות שלך ל-Moodle כדי לגשת למטלות ולמועדי ההגשה';

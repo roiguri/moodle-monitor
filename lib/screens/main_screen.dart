@@ -3,6 +3,7 @@ import 'package:moodle_monitor/screens/tasks_view.dart';
 import 'package:moodle_monitor/screens/courses_view.dart';
 import 'package:moodle_monitor/screens/settings_view.dart';
 import 'package:moodle_monitor/services/moodle_client.dart';
+import 'package:moodle_monitor/constants/app_strings.dart';
 
 /// MainScreen is the primary navigation container
 /// Manages bottom navigation bar and view switching
@@ -136,7 +137,7 @@ class _MainScreenState extends State<MainScreen> {
             fontWeight: FontWeight.normal,
             height: 1.5,
           ),
-          items: const [
+          items: [
             BottomNavigationBarItem(
               icon: Padding(
                 padding: EdgeInsets.only(bottom: 4),
@@ -146,7 +147,7 @@ class _MainScreenState extends State<MainScreen> {
                 padding: EdgeInsets.only(bottom: 4),
                 child: Icon(Icons.dashboard),
               ),
-              label: 'Dashboard',
+              label: AppStrings.navTasks,
             ),
             BottomNavigationBarItem(
               icon: Padding(
@@ -157,7 +158,7 @@ class _MainScreenState extends State<MainScreen> {
                 padding: EdgeInsets.only(bottom: 4),
                 child: Icon(Icons.school),
               ),
-              label: 'All Courses',
+              label: AppStrings.navCourses,
             ),
             BottomNavigationBarItem(
               icon: Padding(
@@ -168,7 +169,7 @@ class _MainScreenState extends State<MainScreen> {
                 padding: EdgeInsets.only(bottom: 4),
                 child: Icon(Icons.settings),
               ),
-              label: 'Settings',
+              label: AppStrings.navSettings,
             ),
           ],
         ),
