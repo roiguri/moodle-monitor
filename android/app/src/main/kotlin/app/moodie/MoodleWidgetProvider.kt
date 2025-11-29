@@ -22,7 +22,6 @@ class MoodleWidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        Log.d("MoodleWidget", "onUpdate called for ${appWidgetIds.size} widgets")
         appWidgetIds.forEach { widgetId ->
             val views = RemoteViews(context.packageName, R.layout.widget_layout_listview)
 
@@ -43,6 +42,9 @@ class MoodleWidgetProvider : AppWidgetProvider() {
             // Ensure default state (Button Visible, Progress Gone)
             views.setViewVisibility(R.id.refresh_button, View.VISIBLE)
             views.setViewVisibility(R.id.refresh_progress, View.GONE)
+            
+            // Force immediate partial update for header to ensure spinner stops
+            appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
 
             // Copy your existing adapter logic
             val serviceIntent = Intent(context, MoodleWidgetService::class.java)
@@ -52,17 +54,13 @@ class MoodleWidgetProvider : AppWidgetProvider() {
             views.setEmptyView(R.id.task_list, R.id.empty_view)
 
             appWidgetManager.updateAppWidget(widgetId, views)
+            appWidgetManager.notifyAppWidgetViewDataChanged(widgetId, R.id.task_list)
         }
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        // Log everything to help debugging
-        Log.d("MoodleWidget", "onReceive called. Action: ${intent.action}, Data: ${intent.data}")
-
         // Check if this is OUR refresh click
         if (intent.action == ACTION_REFRESH) {
-            Log.d("MoodleWidget", "✅ Refresh Click Detected! Updating Views...")
-
             val appWidgetManager = AppWidgetManager.getInstance(context)
             val thisAppWidget = android.content.ComponentName(context.packageName, javaClass.name)
             val appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget)
@@ -78,6 +76,13 @@ class MoodleWidgetProvider : AppWidgetProvider() {
                 // Partially update the widget (efficient)
                 appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
             }
+
+            // FORWARD TO HOMEWIDGET BACKGROUND RECEIVER
+            // This triggers the Dart callback
+            val backgroundIntent = Intent(context, es.antonborri.home_widget.HomeWidgetBackgroundReceiver::class.java)
+            backgroundIntent.action = "es.antonborri.home_widget.action.BACKGROUND"
+            backgroundIntent.data = intent.data
+            context.sendBroadcast(backgroundIntent)
         }
 
         // IMPORTANT: Call super to let HomeWidget plugin handle the background Dart call
