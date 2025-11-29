@@ -13,24 +13,52 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:layout_marginBottom="8dp"
         android:layoutDirection="rtl">
 
+        <!-- Calendar Icon -->
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@android:drawable/ic_menu_my_calendar"
             android:contentDescription="@string/cd_calendar_icon" />
 
+        <!-- Title -->
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/widget_header_deadlines"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/widget_text_primary"
             android:fontFamily="sans-serif"
             android:layout_marginStart="8dp"/>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <!-- The Button (Visible by default) -->
+            <ImageButton
+                android:id="@+id/refresh_button"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@android:drawable/ic_popup_sync"
+                android:background="?android:selectableItemBackgroundBorderless"
+                android:contentDescription="@string/refresh"
+                android:visibility="visible"
+                android:tint="@color/widget_text_primary" />
+
+            <!-- The Spinner (Hidden by default) -->
+            <ProgressBar
+                android:id="@+id/refresh_progress"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:visibility="gone"
+                android:indeterminateTint="@color/widget_text_primary" />
+        </FrameLayout>
     </LinearLayout>
 
     <!-- Scrollable List of Tasks -->
