@@ -13,10 +13,12 @@ import 'package:url_launcher/url_launcher.dart';
 /// CoursesView displays all user's courses with hide/show functionality
 class CoursesView extends StatefulWidget {
   final VoidCallback? onNavigateToSettings;
+  final void Function(VoidCallback refresh)? onRefreshRequested;
 
   const CoursesView({
     Key? key,
     this.onNavigateToSettings,
+    this.onRefreshRequested,
   }) : super(key: key);
 
   @override
@@ -36,6 +38,8 @@ class _CoursesViewState extends State<CoursesView> {
   @override
   void initState() {
     super.initState();
+    // Register refresh callback
+    widget.onRefreshRequested?.call(_loadCourses);
     _initializeAndLoadCourses();
   }
 

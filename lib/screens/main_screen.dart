@@ -25,6 +25,7 @@ class _MainScreenState extends State<MainScreen> {
   final _moodleClient = MoodleClient();
   bool _isCheckingCredentials = true;
   VoidCallback? _refreshTasks;
+  VoidCallback? _refreshCourses;
 
   void _navigateToSettings() {
     setState(() {
@@ -33,8 +34,9 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _onCredentialsSaved() {
-    // Refresh TasksView after credentials are saved
+    // Refresh both views after credentials are saved
     _refreshTasks?.call();
+    _refreshCourses?.call();
     // Navigate to Dashboard tab
     setState(() {
       _selectedIndex = 0;
@@ -101,6 +103,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             CoursesView(
               onNavigateToSettings: _navigateToSettings,
+              onRefreshRequested: (refresh) => _refreshCourses = refresh,
             ),
             SettingsView(
               onCredentialsSaved: _onCredentialsSaved,
