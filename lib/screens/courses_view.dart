@@ -5,7 +5,7 @@ import 'package:moodle_monitor/services/moodle_client.dart';
 import 'package:moodle_monitor/services/preferences_service.dart';
 import 'package:moodle_monitor/utils/snackbar_helper.dart';
 import 'package:moodle_monitor/utils/course_name_utils.dart';
-import 'package:moodle_monitor/widgets/shimmer_loading_view.dart';
+import 'package:moodle_monitor/widgets/shimmer_courses_loading_view.dart';
 import 'package:moodle_monitor/widgets/error_state_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -127,7 +127,7 @@ class _CoursesViewState extends State<CoursesView> {
 
   Widget _buildBody() {
     if (_isLoading) {
-      return const ShimmerLoadingView();
+      return const ShimmerCoursesLoadingView();
     }
 
     if (_errorMessage != null && _courses == null) {
