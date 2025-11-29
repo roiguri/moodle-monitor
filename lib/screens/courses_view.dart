@@ -224,15 +224,33 @@ class _CoursesViewState extends State<CoursesView> {
                 ),
               ),
               const SizedBox(width: 16),
-              // Course name (filtered to Hebrew only)
+              // Course details
               Expanded(
-                child: Text(
-                  CourseNameUtils.extractHebrewCourseName(course.fullName),
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: isHidden ? Colors.grey[600] : Colors.black87,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Course name (Hebrew only)
+                    Text(
+                      CourseNameUtils.extractHebrewName(course.fullName),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: isHidden ? Colors.grey[600] : Colors.black87,
+                      ),
+                    ),
+                    // Course number
+                    if (CourseNameUtils.extractCourseNumber(course.fullName).isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        CourseNameUtils.extractCourseNumber(course.fullName),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
               // Visibility toggle button
