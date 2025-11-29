@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:moodle_monitor/models/moodle_event.dart';
 import 'package:moodle_monitor/services/moodle_client.dart';
@@ -121,7 +120,6 @@ class WidgetService {
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     try {
-      await dotenv.load(fileName: ".env");
       await WidgetService.updateWidget();
       return Future.value(true);
     } catch (e) {

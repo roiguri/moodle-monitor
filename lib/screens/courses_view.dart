@@ -7,11 +7,17 @@ import 'package:moodle_monitor/utils/snackbar_helper.dart';
 import 'package:moodle_monitor/utils/course_name_utils.dart';
 import 'package:moodle_monitor/widgets/shimmer_courses_loading_view.dart';
 import 'package:moodle_monitor/widgets/error_state_view.dart';
+import 'package:moodle_monitor/widgets/credentials_required_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// CoursesView displays all user's courses with hide/show functionality
 class CoursesView extends StatefulWidget {
-  const CoursesView({Key? key}) : super(key: key);
+  final VoidCallback? onNavigateToSettings;
+
+  const CoursesView({
+    Key? key,
+    this.onNavigateToSettings,
+  }) : super(key: key);
 
   @override
   State<CoursesView> createState() => _CoursesViewState();
@@ -25,6 +31,7 @@ class _CoursesViewState extends State<CoursesView> {
   Set<String> _hiddenCourseIds = {};
   bool _isLoading = false;
   String? _errorMessage;
+  bool _isAuthError = false;
 
   @override
   void initState() {
@@ -57,6 +64,7 @@ class _CoursesViewState extends State<CoursesView> {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
+      _isAuthError = false;
     });
 
     try {
@@ -65,6 +73,7 @@ class _CoursesViewState extends State<CoursesView> {
         setState(() {
           _courses = courses;
           _isLoading = false;
+          _isAuthError = false;
         });
       }
     } on AuthException catch (e) {
@@ -72,6 +81,7 @@ class _CoursesViewState extends State<CoursesView> {
         setState(() {
           _errorMessage = e.toString();
           _isLoading = false;
+          _isAuthError = true;
         });
       }
     } catch (e) {
@@ -79,6 +89,7 @@ class _CoursesViewState extends State<CoursesView> {
         setState(() {
           _errorMessage = e.toString();
           _isLoading = false;
+          _isAuthError = false;
         });
         SnackbarHelper.showError(
           context,
@@ -128,6 +139,27 @@ class _CoursesViewState extends State<CoursesView> {
   Widget _buildBody() {
     if (_isLoading) {
       return const ShimmerCoursesLoadingView();
+    }
+
+    if (_isAuthError && _courses == null) {
+      return FutureBuilder<bool>(
+        future: _moodleClient.hasCredentials(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const ShimmerCoursesLoadingView();
+          }
+          
+          final hasCredentials = snapshot.data ?? false;
+          final errorType = hasCredentials
+              ? CredentialsErrorType.invalid
+              : CredentialsErrorType.missing;
+          
+          return CredentialsRequiredView(
+            onGoToSettings: widget.onNavigateToSettings,
+            errorType: errorType,
+          );
+        },
+      );
     }
 
     if (_errorMessage != null && _courses == null) {

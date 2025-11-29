@@ -103,7 +103,9 @@ class _MainScreenState extends State<MainScreen> {
               onNavigateToSettings: _navigateToSettings,
               onRefreshRequested: (refresh) => _refreshTasks = refresh,
             ),
-            const CoursesView(),
+            CoursesView(
+              onNavigateToSettings: _navigateToSettings,
+            ),
             SettingsView(
               onCredentialsSaved: _onCredentialsSaved,
               onThemeChanged: widget.onThemeChanged,
