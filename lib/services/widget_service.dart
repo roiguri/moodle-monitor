@@ -7,6 +7,7 @@ import 'package:moodie/utils/date_utils.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:moodie/services/notification_service.dart';
 import 'package:moodie/services/cache_service.dart';
+import 'package:moodie/services/preferences_service.dart';
 
 // 1. Top-level function (Outside any class)
 @pragma('vm:entry-point')
@@ -68,18 +69,24 @@ class WidgetService {
         // --- Notification Logic ---
         final cacheService = CacheService();
         final notificationService = NotificationService();
+        final prefs = await PreferencesService.getInstance();
+        
+        final notifyNewTasks = prefs.getNotifyNewTasks();
+        final notifyDeadlines = prefs.getNotifyDeadlines();
         
         final knownIds = await cacheService.getKnownTaskIds();
         final newIds = <String>[];
 
         // Check for new tasks
-        for (final event in events) {
-          if (!knownIds.contains(event.uniqueId)) {
-            await notificationService.showNewTaskNotification(
-              event.name,
-              event.course,
-            );
-            newIds.add(event.uniqueId);
+        if (notifyNewTasks) {
+          for (final event in events) {
+            if (!knownIds.contains(event.uniqueId)) {
+              await notificationService.showNewTaskNotification(
+                event.name,
+                event.course,
+              );
+              newIds.add(event.uniqueId);
+            }
           }
         }
 
@@ -88,15 +95,25 @@ class WidgetService {
         await cacheService.saveTaskIds(currentTaskIds);
 
         // Schedule Deadlines
-        for (final event in events) {
-          final deadline = DateTime.fromMillisecondsSinceEpoch(event.timeSort * 1000);
-          // Schedule notification exactly at deadline (0 buffer) for testing
-          await notificationService.scheduleDeadlineNotification(
-            event.id,
-            event.name,
-            deadline,
-            Duration.zero,
-          );
+        if (notifyDeadlines) {
+          final alertOffsets = prefs.getDeadlineAlerts();
+          
+          for (final event in events) {
+            final deadline = DateTime.fromMillisecondsSinceEpoch(event.timeSort * 1000);
+            
+            for (final offsetMinutes in alertOffsets) {
+              // Create a unique ID for each notification: eventId * 10000 + offset
+              // This assumes offset is < 10000 (max 6 days) and event ID doesn't overflow
+              final notificationId = (event.id * 10000) + offsetMinutes; 
+              
+              await notificationService.scheduleDeadlineNotification(
+                notificationId,
+                event.name,
+                deadline,
+                Duration(minutes: offsetMinutes),
+              );
+            }
+          }
         }
         // --------------------------
       }

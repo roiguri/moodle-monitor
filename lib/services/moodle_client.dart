@@ -117,8 +117,10 @@ class MoodleClient {
         throw AuthException('Invalid credentials: ${body['message'] ?? 'Unknown error'}');
       }
       
-      final List<dynamic> events = body['events'];
-      return events.map((dynamic item) => MoodleEvent.fromJson(item)).toList();
+      final List<dynamic> eventsJson = body['events'];
+      final events = eventsJson.map((dynamic item) => MoodleEvent.fromJson(item)).toList();
+
+      return events;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       // Unauthorized or Forbidden - invalid credentials
       throw AuthException('Invalid Moodle credentials. Please check your token and URL.');
