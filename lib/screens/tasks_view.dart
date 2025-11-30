@@ -371,14 +371,16 @@ class _TasksViewState extends State<TasksView> {
   }
 
   Widget _buildEmptyState() {
-    return const Padding(
-      padding: EdgeInsets.all(16),
-      child: Text(
-        AppStrings.noTasks,
-        style: TextStyle(
-          fontSize: 16,
-          color: Colors.grey,
-        ),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/no_tasks_transparent.webp',
+            width: MediaQuery.of(context).size.width-40,
+            fit: BoxFit.fitWidth,
+          ),
+        ],
       ),
     );
   }
