@@ -181,4 +181,42 @@ class MoodleClient {
       throw Exception('Failed to load courses: HTTP ${response.statusCode}');
     }
   }
+  /// Mark an activity as complete in Moodle
+  /// [cmid] is the Course Module ID
+  /// [completed] true for complete, false for incomplete
+  Future<bool> updateActivityCompletion(int cmid, bool completed) async {
+    final token = await getMoodleToken();
+    final url = await getMoodleUrl();
+
+    if (token == null || url == null) {
+      throw AuthException('Missing credentials');
+    }
+
+    // Function: core_completion_update_activity_completion_status_manually
+    // Arguments: cmid, completed (1 or 0)
+    final response = await _httpClient.post(
+      Uri.parse('$url/webservice/rest/server.php'),
+      body: {
+        'wstoken': token,
+        'wsfunction': 'core_completion_update_activity_completion_status_manually',
+        'moodlewsrestformat': 'json',
+        'cmid': cmid.toString(),
+        'completed': completed ? '1' : '0',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body);
+      
+      // Check for exceptions
+      if (body is Map && body.containsKey('exception')) {
+        throw Exception(body['message']);
+      }
+      
+      // The API returns an object like {"status": true, "warnings": []}
+      return body['status'] == true;
+    } else {
+      throw Exception('Failed to update completion status: ${response.statusCode}');
+    }
+  }
 }

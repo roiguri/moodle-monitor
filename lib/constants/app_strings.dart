@@ -12,13 +12,24 @@ class AppStrings {
   static const String next30Days = '30 הימים הבאים';
   static const String later = 'מאוחר יותר';
 
-  // Summary (with proper Hebrew grammar)
+  // Summary
   static const String noDeadlinesThisWeek = 'אין מטלות השבוע';
   static const String oneDeadlineThisWeek = 'יש לך מטלה אחת להגשה השבוע';
   static const String multipleDeadlinesThisWeek = 'יש לך {count} מטלות להגשה השבוע';
 
   // Empty state
   static const String noTasks = 'אין מטלות להגשה';
+  static const String showHiddenTasks = 'הצג מטלות שהוסתרו';
+  static const String hideHiddenTasks = 'הסתר מטלות שהוסתרו';
+  static const String markAsDone = 'סמן כהושלם';
+  static const String hideTask = 'הסתר';
+  static const String restoreTask = 'שחזר';
+  static const String taskHidden = 'המטלה הוסתרה';
+  static const String taskRestored = 'המטלה שוחזרה';
+  static const String taskMarkingErrorMissingId = 'לא ניתן לסמן מטלה זו (חסר מזהה רכיב)';
+  static const String taskMarkingInProgress = 'מעדכן מול Moodle...';
+  static const String taskMarkedAsDone = 'סומן כבוצע!';
+  static const String taskMarkingError = 'שגיאה בסימון המטלה, ייתכן ולא ניתן לסמן מטלה זו כבוצעה';
 
   // Error messages
   static const String loadError = 'שגיאה בטעינת המידע';

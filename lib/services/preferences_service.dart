@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Uses SharedPreferences for local storage
 class PreferencesService {
   static const String _keyHiddenCourses = 'hidden_courses';
+  static const String _keyIgnoredEvents = 'ignored_events';
   static const String _keyThemeMode = 'theme_mode';
 
   final SharedPreferences _prefs;
@@ -59,6 +60,55 @@ class PreferencesService {
       return await showCourse(courseId);
     } else {
       return await hideCourse(courseId);
+    }
+  }
+
+  // --- Ignored Events Logic ---
+
+  /// Get list of ignored event IDs
+  Future<List<String>> getIgnoredEvents() async {
+    return _prefs.getStringList(_keyIgnoredEvents) ?? [];
+  }
+
+  /// Add an event to the ignore list
+  Future<bool> ignoreEvent(int eventId) async {
+    final ignored = await getIgnoredEvents();
+    final idStr = eventId.toString();
+    if (!ignored.contains(idStr)) {
+      ignored.add(idStr);
+      return await _prefs.setStringList(_keyIgnoredEvents, ignored);
+    }
+    return true;
+  }
+
+  /// Un-ignore an event (optional, for undo functionality)
+  Future<bool> unignoreEvent(int eventId) async {
+    final ignored = await getIgnoredEvents();
+    final idStr = eventId.toString();
+    if (ignored.contains(idStr)) {
+      ignored.remove(idStr);
+      return await _prefs.setStringList(_keyIgnoredEvents, ignored);
+    }
+    return true;
+  }
+
+  /// Remove ignored IDs that are no longer in the fetched list
+  /// [currentEventIds] List of IDs currently fetched from Moodle
+  Future<void> cleanupIgnoredEvents(List<String> currentEventIds) async {
+    final ignored = await getIgnoredEvents();
+    if (ignored.isEmpty) return;
+
+    final currentSet = currentEventIds.toSet();
+    final List<String> toKeep = [];
+
+    for (final id in ignored) {
+      if (currentSet.contains(id)) {
+        toKeep.add(id);
+      }
+    }
+
+    if (toKeep.length != ignored.length) {
+      await _prefs.setStringList(_keyIgnoredEvents, toKeep);
     }
   }
 

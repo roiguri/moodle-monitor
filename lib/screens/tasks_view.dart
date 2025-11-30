@@ -39,6 +39,8 @@ class _TasksViewState extends State<TasksView> {
   String? _errorMessage;
   bool _isAuthError = false;
   ViewType _selectedView = ViewType.day;
+  Set<String> _ignoredEventIds = {};
+  bool _showHidden = false;
 
   void _onViewChanged(ViewType viewType) {
     setState(() {
@@ -50,9 +52,20 @@ class _TasksViewState extends State<TasksView> {
   void initState() {
     super.initState();
     _moodleClient = MoodleClient();
+    _loadIgnoredEvents();
     // Register refresh callback
     widget.onRefreshRequested?.call(_loadDeadlines);
     _loadDeadlines();
+  }
+
+  Future<void> _loadIgnoredEvents() async {
+    final prefs = await PreferencesService.getInstance();
+    final ignored = await prefs.getIgnoredEvents();
+    if (mounted) {
+      setState(() {
+        _ignoredEventIds = ignored.toSet();
+      });
+    }
   }
 
   Future<void> _loadDeadlines() async {
@@ -71,6 +84,11 @@ class _TasksViewState extends State<TasksView> {
           _errorMessage = null;
           _isAuthError = false; // Explicitly clear auth error on success
         });
+        
+        // Cleanup stale ignored events
+        final prefs = await PreferencesService.getInstance();
+        await prefs.cleanupIgnoredEvents(events.map((e) => e.id.toString()).toList());
+        
         // Update widget after loading events
         WidgetService.updateWidget();
       }
@@ -245,17 +263,23 @@ class _TasksViewState extends State<TasksView> {
       final prefsService = await PreferencesService.getInstance();
       final hiddenCourses = await prefsService.getHiddenCourses();
       
-      if (hiddenCourses.isEmpty) {
-        return _events!;
-      }
-      
       return _events!.where((event) {
-        return !hiddenCourses.contains(event.courseid.toString());
+        final isHiddenCourse = hiddenCourses.contains(event.courseid.toString());
+        final isIgnoredEvent = _ignoredEventIds.contains(event.id.toString());
+        return !isHiddenCourse && !isIgnoredEvent;
       }).toList();
     } catch (e) {
       // If there's any error loading preferences, return all events
       return _events!;
     }
+  }
+
+  /// Get list of ignored events that are still relevant (not past deadline, etc)
+  List<MoodleEvent> _getHiddenEvents() {
+    if (_events == null) return [];
+    return _events!.where((event) {
+      return _ignoredEventIds.contains(event.id.toString());
+    }).toList();
   }
 
   Widget _buildContentUI(List<MoodleEvent> events) {
@@ -290,6 +314,8 @@ class _TasksViewState extends State<TasksView> {
               events: sectionEvents,
               priority: priority,
               showCourse: true,
+              onIgnore: _handleIgnoreTask,
+              onMarkDone: _handleMarkAsDone,
             );
           }),
           if (dayKeys.isEmpty) _buildEmptyState(),
@@ -301,11 +327,45 @@ class _TasksViewState extends State<TasksView> {
               title: courseKey,
               events: sectionEvents,
               showCourse: false,
+              onIgnore: _handleIgnoreTask,
+              onMarkDone: _handleMarkAsDone,
             );
           }),
           if (courseKeys.isEmpty) _buildEmptyState(),
         ],
-        const SizedBox(height: 24),
+        const SizedBox(height: 4),
+        
+        // Hidden Tasks Section
+        if (_ignoredEventIds.isNotEmpty) ...[
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _showHidden = !_showHidden;
+                  });
+                },
+                icon: Icon(
+                  _showHidden ? Icons.visibility_off : Icons.visibility,
+                  color: Colors.grey,
+                ),
+                label: Text(
+                  _showHidden ? AppStrings.hideHiddenTasks : AppStrings.showHiddenTasks,
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ),
+            ),
+          ),
+          if (_showHidden)
+            EventSection(
+              title: '',
+              events: _getHiddenEvents(),
+              showCourse: true,
+              onRestore: _handleRestoreTask,
+            ),
+          const SizedBox(height: 24),
+        ],
       ],
     );
   }
@@ -321,5 +381,52 @@ class _TasksViewState extends State<TasksView> {
         ),
       ),
     );
+  }
+
+  Future<void> _handleIgnoreTask(MoodleEvent event) async {
+    final prefs = await PreferencesService.getInstance();
+    await prefs.ignoreEvent(event.id);
+    await _loadIgnoredEvents(); // Refresh state to hide card immediately
+    
+    if (mounted) {
+      SnackbarHelper.showInfo(context, AppStrings.taskHidden);
+    }
+  }
+
+  Future<void> _handleRestoreTask(MoodleEvent event) async {
+    final prefs = await PreferencesService.getInstance();
+    await prefs.unignoreEvent(event.id);
+    await _loadIgnoredEvents();
+    
+    if (mounted) {
+      SnackbarHelper.showSuccess(context, AppStrings.taskRestored);
+    }
+  }
+
+  Future<void> _handleMarkAsDone(MoodleEvent event) async {
+    if (event.cmid == null) {
+      SnackbarHelper.showError(context, AppStrings.taskMarkingErrorMissingId);
+      return;
+    }
+
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(AppStrings.taskMarkingInProgress), duration: Duration(seconds: 1)),
+      );
+
+      final success = await _moodleClient.updateActivityCompletion(event.cmid!, true);
+      
+      if (success) {
+        if (mounted) {
+          SnackbarHelper.showSuccess(context, AppStrings.taskMarkedAsDone);
+          // Refresh the list from Moodle - the task should disappear from the API response
+          _onRefresh(); 
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        SnackbarHelper.showError(context, AppStrings.taskMarkingError);
+      }
+    }
   }
 }
