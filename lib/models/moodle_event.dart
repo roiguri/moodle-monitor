@@ -55,4 +55,6 @@ class MoodleEvent {
       cmid: parsedCmid,
     );
   }
+
+  String get uniqueId => id.toString();
 }

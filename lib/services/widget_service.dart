@@ -5,6 +5,8 @@ import 'package:moodie/models/moodle_event.dart';
 import 'package:moodie/services/moodle_client.dart';
 import 'package:moodie/utils/date_utils.dart';
 import 'package:workmanager/workmanager.dart';
+import 'package:moodie/services/notification_service.dart';
+import 'package:moodie/services/cache_service.dart';
 
 // 1. Top-level function (Outside any class)
 @pragma('vm:entry-point')
@@ -62,6 +64,41 @@ class WidgetService {
         await HomeWidget.saveWidgetData<bool>('is_empty', false);
         await HomeWidget.saveWidgetData<int>('event_count', upcomingEvents.length);
         await HomeWidget.saveWidgetData<String>('all_events_json', eventsJson);
+
+        // --- Notification Logic ---
+        final cacheService = CacheService();
+        final notificationService = NotificationService();
+        
+        final knownIds = await cacheService.getKnownTaskIds();
+        final newIds = <String>[];
+
+        // Check for new tasks
+        for (final event in events) {
+          if (!knownIds.contains(event.uniqueId)) {
+            await notificationService.showNewTaskNotification(
+              event.name,
+              event.course,
+            );
+            newIds.add(event.uniqueId);
+          }
+        }
+
+        // Sync cache: Overwrite with the current list of IDs
+        final currentTaskIds = events.map((e) => e.uniqueId).toList();
+        await cacheService.saveTaskIds(currentTaskIds);
+
+        // Schedule Deadlines
+        for (final event in events) {
+          final deadline = DateTime.fromMillisecondsSinceEpoch(event.timeSort * 1000);
+          // Schedule notification exactly at deadline (0 buffer) for testing
+          await notificationService.scheduleDeadlineNotification(
+            event.id,
+            event.name,
+            deadline,
+            Duration.zero,
+          );
+        }
+        // --------------------------
       }
 
       // Update the widget UI
@@ -110,11 +147,11 @@ class WidgetService {
       isInDebugMode: false,
     );
 
-    // Register periodic task (runs every 30 minutes)
+    // Register periodic task (runs every 15 minutes)
     await Workmanager().registerPeriodicTask(
       _backgroundTaskName,
       _backgroundTaskName,
-      frequency: const Duration(minutes: 30),
+      frequency: const Duration(minutes: 15),
       constraints: Constraints(
         networkType: NetworkType.connected,
       ),

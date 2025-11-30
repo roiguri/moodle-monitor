@@ -101,4 +101,13 @@ class AppStrings {
 
   // First launch
   static const String firstLaunchMessage = 'נא להגדיר את פרטי ההתחברות ל-Moodle כדי להתחיל';
+
+  // Notifications
+  static const String notificationNewTaskTitle = 'מטלה חדשה: {course}';
+  static const String notificationDeadlineTitle = 'מועד הגשה מתקרב';
+  static const String notificationDeadlineBody = '{task} להגשה בקרוב!';
+  static const String notificationChannelNewTasks = 'מטלות חדשות';
+  static const String notificationChannelNewTasksDesc = 'התראות על מטלות חדשות שנוספו';
+  static const String notificationChannelDeadlines = 'מועדי הגשה';
+  static const String notificationChannelDeadlinesDesc = 'התראות על מועדי הגשה מתקרבים';
 }

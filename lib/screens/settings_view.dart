@@ -4,6 +4,8 @@ import 'package:moodie/constants/app_strings.dart';
 import 'package:moodie/utils/snackbar_helper.dart';
 
 import 'package:moodie/services/preferences_service.dart';
+import 'package:moodie/services/notification_service.dart';
+import 'package:moodie/services/widget_service.dart';
 
 /// SettingsView allows users to configure app settings
 /// Including Moodle credentials and theme preferences
@@ -439,6 +441,7 @@ class _SettingsViewState extends State<SettingsView> {
                       color: Colors.grey[700],
                     ),
               ),
+              const SizedBox(height: 32),
             ],
           ),
         ),

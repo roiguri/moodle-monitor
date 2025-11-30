@@ -5,6 +5,7 @@ import 'package:moodie/screens/settings_view.dart';
 import 'package:moodie/services/moodle_client.dart';
 import 'package:moodie/constants/app_strings.dart';
 import 'package:moodie/utils/snackbar_helper.dart';
+import 'package:moodie/services/notification_service.dart';
 
 /// MainScreen is the primary navigation container
 /// Manages bottom navigation bar and view switching
@@ -46,6 +47,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+    NotificationService().initialize();
     _checkCredentials();
   }
 
