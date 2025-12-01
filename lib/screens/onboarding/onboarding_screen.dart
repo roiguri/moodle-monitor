@@ -17,7 +17,6 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
-  int _currentPage = 0;
 
   @override
   void dispose() {
@@ -50,11 +49,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: PageView(
           controller: _pageController,
           physics: const NeverScrollableScrollPhysics(), // Disable swipe to enforce flow
-          onPageChanged: (index) {
-            setState(() {
-              _currentPage = index;
-            });
-          },
           children: [
             WelcomePage(onNext: _nextPage),
             OnboardingConfigPage(onNext: _nextPage),
