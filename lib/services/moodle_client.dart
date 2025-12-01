@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:moodie/models/moodle_event.dart';
 import 'package:moodie/models/moodle_course.dart';
+import 'package:moodie/services/preferences_service.dart';
 
 /// Custom exception for authentication/credential errors
 class AuthException implements Exception {
@@ -117,14 +118,36 @@ class MoodleClient {
         throw AuthException('Invalid credentials: ${body['message'] ?? 'Unknown error'}');
       }
       
-      final List<dynamic> events = body['events'];
-      return events.map((dynamic item) => MoodleEvent.fromJson(item)).toList();
+      final List<dynamic> eventsJson = body['events'];
+      final events = eventsJson.map((dynamic item) => MoodleEvent.fromJson(item)).toList();
+
+      return events;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       // Unauthorized or Forbidden - invalid credentials
       throw AuthException('Invalid Moodle credentials. Please check your token and URL.');
     } else {
       throw Exception('Failed to load deadlines: HTTP ${response.statusCode}');
     }
+  }
+
+  /// Fetch deadlines and filter out hidden courses and ignored events
+  Future<List<MoodleEvent>> fetchVisibleDeadlines() async {
+    final events = await fetchDeadlines();
+    final prefs = await PreferencesService.getInstance();
+    
+    final hiddenCourses = await prefs.getHiddenCourses();
+    final ignoredEvents = await prefs.getIgnoredEvents();
+    
+    return events.where((event) {
+      return isEventVisible(event, hiddenCourses, ignoredEvents);
+    }).toList();
+  }
+
+  /// Helper to check if an event should be visible
+  static bool isEventVisible(MoodleEvent event, List<String> hiddenCourses, List<String> ignoredEvents) {
+    final isHiddenCourse = hiddenCourses.contains(event.courseid.toString());
+    final isIgnoredEvent = ignoredEvents.contains(event.id.toString());
+    return !isHiddenCourse && !isIgnoredEvent;
   }
 
   Future<List<MoodleCourse>> fetchCourses() async {

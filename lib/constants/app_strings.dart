@@ -101,4 +101,26 @@ class AppStrings {
 
   // First launch
   static const String firstLaunchMessage = 'נא להגדיר את פרטי ההתחברות ל-Moodle כדי להתחיל';
+
+  // Notifications
+  static const String notificationNewTaskTitle = '\u200Fמטלה חדשה: {course}';
+  static const String notificationDeadlineTitle = '\u200Fמועד הגשה מתקרב';
+  static const String notificationDeadlineBody = '\u200F{task} להגשה בקרוב!';
+  static const String notificationChannelNewTasks = 'מטלות חדשות';
+  static const String notificationChannelNewTasksDesc = 'התראות על מטלות חדשות שנוספו';
+  static const String notificationChannelDeadlines = 'מועדי הגשה';
+  static const String notificationChannelDeadlinesDesc = 'התראות על מועדי הגשה מתקרבים';
+
+  // Notification Settings
+  static const String notificationsSection = 'התראות';
+  static const String notifyNewTasks = 'מטלות חדשות';
+  static const String notifyNewTasksDesc = 'קבל התראה כשמטלה חדשה מתגלה';
+  static const String notifyDeadlines = 'תזכורת דדליין';
+  static const String notifyDeadlinesDesc = 'קבל התראה לפני מועד ההגשה';
+  static const String alertTime15Minutes = '15 דקות לפני';
+  static const String alertTime1Hour = 'שעה לפני';
+  static const String alertTime1Day = 'יום לפני';
+  static const String alertTime2Days = 'יומיים לפני';
+  static const String permissionsRequired = 'נדרשת הרשאה כדי לאפשר התראות';
+
 }

@@ -123,6 +123,47 @@ class PreferencesService {
     return await _prefs.setString(_keyThemeMode, mode);
   }
 
+  // --- Notification Settings ---
+  static const String _keyNotifyNewTasks = 'notify_new_tasks';
+  static const String _keyNotifyDeadlines = 'notify_deadlines';
+
+  /// Get new task notification preference (default: true)
+  bool getNotifyNewTasks() {
+    return _prefs.getBool(_keyNotifyNewTasks) ?? false;
+  }
+
+  /// Set new task notification preference
+  Future<bool> setNotifyNewTasks(bool enabled) async {
+    return await _prefs.setBool(_keyNotifyNewTasks, enabled);
+  }
+
+  /// Get deadline notification preference (default: true)
+  bool getNotifyDeadlines() {
+    return _prefs.getBool(_keyNotifyDeadlines) ?? false;
+  }
+
+  /// Set deadline notification preference
+  Future<bool> setNotifyDeadlines(bool enabled) async {
+    return await _prefs.setBool(_keyNotifyDeadlines, enabled);
+  }
+
+  static const String _keyDeadlineAlerts = 'deadline_alerts';
+
+  /// Get list of deadline alert offsets in minutes (default: [60] -> 1 hour)
+  List<int> getDeadlineAlerts() {
+    final List<String>? stored = _prefs.getStringList(_keyDeadlineAlerts);
+    if (stored == null) {
+      return [60]; // Default: 1 hour
+    }
+    return stored.map((e) => int.tryParse(e) ?? 60).toList();
+  }
+
+  /// Set list of deadline alert offsets in minutes
+  Future<bool> setDeadlineAlerts(List<int> alerts) async {
+    final List<String> stored = alerts.toSet().map((e) => e.toString()).toList();
+    return await _prefs.setStringList(_keyDeadlineAlerts, stored);
+  }
+
   /// Clear all preferences (useful for testing or reset)
   Future<bool> clearAll() async {
     return await _prefs.clear();

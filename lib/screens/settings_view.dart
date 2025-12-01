@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:moodie/services/moodle_client.dart';
 import 'package:moodie/constants/app_strings.dart';
 import 'package:moodie/utils/snackbar_helper.dart';
 
 import 'package:moodie/services/preferences_service.dart';
+import 'package:moodie/services/notification_service.dart';
+import 'package:moodie/services/widget_service.dart';
 
 /// SettingsView allows users to configure app settings
 /// Including Moodle credentials and theme preferences
@@ -37,19 +40,30 @@ class _SettingsViewState extends State<SettingsView> {
   bool _hasUrlError = false;
   bool _hasTokenError = false;
 
+  bool _notifyNewTasks = true;
+  bool _notifyDeadlines = true;
+  List<int> _deadlineAlerts = [60];
+
   @override
   void initState() {
     super.initState();
     _loadExistingCredentials();
-    _loadTheme();
+    _loadPreferences();
   }
 
-  Future<void> _loadTheme() async {
+  Future<void> _loadPreferences() async {
     final prefs = await PreferencesService.getInstance();
     final savedTheme = prefs.getThemeMode();
+    final notifyNewTasks = prefs.getNotifyNewTasks();
+    final notifyDeadlines = prefs.getNotifyDeadlines();
+    final deadlineAlerts = prefs.getDeadlineAlerts();
+
     if (mounted) {
       setState(() {
         _currentTheme = _getThemeModeFromString(savedTheme);
+        _notifyNewTasks = notifyNewTasks;
+        _notifyDeadlines = notifyDeadlines;
+        _deadlineAlerts = deadlineAlerts;
       });
     }
   }
@@ -277,6 +291,90 @@ class _SettingsViewState extends State<SettingsView> {
               const Divider(),
               const SizedBox(height: 24),
 
+              // Notifications Section
+              Text(
+                AppStrings.notificationsSection,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 16),
+              SwitchListTile(
+                title: const Text(AppStrings.notifyNewTasks),
+                subtitle: const Text(AppStrings.notifyNewTasksDesc),
+                value: _notifyNewTasks,
+                onChanged: (bool value) async {
+                  setState(() {
+                    _notifyNewTasks = value;
+                  });
+                  final prefs = await PreferencesService.getInstance();
+                  await prefs.setNotifyNewTasks(value);
+                  if (value) {
+                    final granted = await NotificationService().requestPermissions();
+                    if (!granted) {
+                      setState(() {
+                        _notifyNewTasks = false;
+                      });
+                      await prefs.setNotifyNewTasks(false);
+                      if (mounted) {
+                        SnackbarHelper.showError(
+                          context,
+                          AppStrings.permissionsRequired,
+                          duration: const Duration(seconds: 4),
+                        );
+                      }
+                    }
+                  }
+                },
+              ),
+              SwitchListTile(
+                title: const Text(AppStrings.notifyDeadlines),
+                subtitle: const Text(AppStrings.notifyDeadlinesDesc),
+                value: _notifyDeadlines,
+                onChanged: (bool value) async {
+                  setState(() {
+                    _notifyDeadlines = value;
+                  });
+                  final prefs = await PreferencesService.getInstance();
+                  await prefs.setNotifyDeadlines(value);
+                  if (value) {
+                    final granted = await NotificationService().requestPermissions();
+                    if (!granted) {
+                      setState(() {
+                        _notifyDeadlines = false;
+                      });
+                      await prefs.setNotifyDeadlines(false);
+                      if (mounted) {
+                        SnackbarHelper.showError(
+                          context,
+                          AppStrings.permissionsRequired,
+                          duration: const Duration(seconds: 4),
+                        );
+                      }
+                    }
+                  }
+                },
+              ),
+              
+              if (_notifyDeadlines) ...[
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    children: [
+                      _buildAlertOption(15, AppStrings.alertTime15Minutes),
+                      _buildAlertOption(60, AppStrings.alertTime1Hour),
+                      _buildAlertOption(1440, AppStrings.alertTime1Day),
+                      _buildAlertOption(2880, AppStrings.alertTime2Days),
+                    ],
+                  ),
+                ),
+              ],
+
+              const SizedBox(height: 32),
+              const Divider(),
+              const SizedBox(height: 24),
+
               // Credentials Section
               Text(
                 AppStrings.connectionSection,
@@ -439,10 +537,32 @@ class _SettingsViewState extends State<SettingsView> {
                       color: Colors.grey[700],
                     ),
               ),
+
             ],
           ),
         ),
       ),
+    );
+  }
+
+
+  Widget _buildAlertOption(int minutes, String label) {
+    return CheckboxListTile(
+      title: Text(label),
+      value: _deadlineAlerts.contains(minutes),
+      onChanged: (bool? value) async {
+        setState(() {
+          if (value == true) {
+            _deadlineAlerts.add(minutes);
+          } else {
+            _deadlineAlerts.remove(minutes);
+          }
+        });
+        final prefs = await PreferencesService.getInstance();
+        await prefs.setDeadlineAlerts(_deadlineAlerts);
+      },
+      dense: true,
+      controlAffinity: ListTileControlAffinity.leading,
     );
   }
 }
