@@ -134,8 +134,8 @@ class AppStrings {
   static const String onboardingTokenHelpTitle = 'איך משיגים טוקן?';
   
   static const String onboardingWidgetTitle = 'הלו"ז תמיד מול העיניים';
-  static const String onboardingWidgetBody = 'יש לי ווידג\'ט מעולה למסך הבית. ככה לא צריך לפתוח את האפליקציה כדי לראות מה השיעור הבא!';
-  static const String onboardingWidgetButton = 'נשמע מעולה!';
+  static const String onboardingWidgetBody = 'רק דבר קטן אחרון, יש לי ווידג\'ט מעולה למסך הבית. ככה לא צריך לפתוח את האפליקציה כדי לראות מה השיעור הבא!';
+  static const String onboardingWidgetButton = 'נשמע מעולה, בוא נתחיל!';
 
   static const String onboardingPermissionsTitle = 'לא מפספסים כלום';
   static const String onboardingPermissionsBody = 'רוצה שאזכיר לך לפני שזמן ההגשה מגיע, או כשקיבלת מטלה חדשה? מבטיח לא לחפור סתם';

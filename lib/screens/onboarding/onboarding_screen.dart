@@ -58,8 +58,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           children: [
             WelcomePage(onNext: _nextPage),
             OnboardingConfigPage(onNext: _nextPage),
-            WidgetPage(onNext: _nextPage),
-            OnboardingPermissionsPage(onFinish: _finishOnboarding),
+            OnboardingPermissionsPage(onFinish: _nextPage),
+            WidgetPage(onNext: _finishOnboarding),
           ],
         ),
       ),
