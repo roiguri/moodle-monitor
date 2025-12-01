@@ -75,10 +75,11 @@ class WidgetService {
         final notifyDeadlines = prefs.getNotifyDeadlines();
         
         final knownIds = await cacheService.getKnownTaskIds();
+        final isFirstFetchCompleted = prefs.getIsFirstFetchCompleted();
         final newIds = <String>[];
 
         // Check for new tasks
-        if (notifyNewTasks) {
+        if (notifyNewTasks && isFirstFetchCompleted) {
           for (final event in events) {
             if (!knownIds.contains(event.uniqueId)) {
               await notificationService.showNewTaskNotification(
@@ -93,6 +94,10 @@ class WidgetService {
         // Sync cache: Overwrite with the current list of IDs
         final currentTaskIds = events.map((e) => e.uniqueId).toList();
         await cacheService.saveTaskIds(currentTaskIds);
+        
+        if (!isFirstFetchCompleted) {
+          await prefs.setIsFirstFetchCompleted(true);
+        }
 
         // Schedule Deadlines
         if (notifyDeadlines) {
