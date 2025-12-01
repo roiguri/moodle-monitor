@@ -129,7 +129,7 @@ class PreferencesService {
 
   /// Get new task notification preference (default: true)
   bool getNotifyNewTasks() {
-    return _prefs.getBool(_keyNotifyNewTasks) ?? true;
+    return _prefs.getBool(_keyNotifyNewTasks) ?? false;
   }
 
   /// Set new task notification preference
@@ -139,7 +139,7 @@ class PreferencesService {
 
   /// Get deadline notification preference (default: true)
   bool getNotifyDeadlines() {
-    return _prefs.getBool(_keyNotifyDeadlines) ?? true;
+    return _prefs.getBool(_keyNotifyDeadlines) ?? false;
   }
 
   /// Set deadline notification preference

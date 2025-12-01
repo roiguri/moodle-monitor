@@ -121,5 +121,6 @@ class AppStrings {
   static const String alertTime1Hour = 'שעה לפני';
   static const String alertTime1Day = 'יום לפני';
   static const String alertTime2Days = 'יומיים לפני';
+  static const String permissionsRequired = 'נדרשת הרשאה כדי לאפשר התראות';
 
 }

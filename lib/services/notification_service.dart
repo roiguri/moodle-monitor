@@ -3,6 +3,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:moodie/constants/app_strings.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:moodie/services/preferences_service.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -49,8 +50,19 @@ class NotificationService {
       },
     );
 
+    // Check if notifications are enabled in preferences
+    final prefs = await PreferencesService.getInstance();
+    final shouldRequestPermissions = prefs.getNotifyNewTasks() || prefs.getNotifyDeadlines();
+
+    if (shouldRequestPermissions) {
+      await requestPermissions();
+    }
+  }
+
+  /// Request notification permissions from the user
+  Future<bool> requestPermissions() async {
     // Request permissions for Android 13+
-    await flutterLocalNotificationsPlugin
+    final bool? granted = await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
@@ -60,6 +72,8 @@ class NotificationService {
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.requestExactAlarmsPermission();
+
+    return granted ?? false;
   }
 
   Future<void> showNewTaskNotification(String taskName, String courseName) async {

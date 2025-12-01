@@ -309,6 +309,22 @@ class _SettingsViewState extends State<SettingsView> {
                   });
                   final prefs = await PreferencesService.getInstance();
                   await prefs.setNotifyNewTasks(value);
+                  if (value) {
+                    final granted = await NotificationService().requestPermissions();
+                    if (!granted) {
+                      setState(() {
+                        _notifyNewTasks = false;
+                      });
+                      await prefs.setNotifyNewTasks(false);
+                      if (mounted) {
+                        SnackbarHelper.showError(
+                          context,
+                          AppStrings.permissionsRequired,
+                          duration: const Duration(seconds: 4),
+                        );
+                      }
+                    }
+                  }
                 },
               ),
               SwitchListTile(
@@ -321,6 +337,22 @@ class _SettingsViewState extends State<SettingsView> {
                   });
                   final prefs = await PreferencesService.getInstance();
                   await prefs.setNotifyDeadlines(value);
+                  if (value) {
+                    final granted = await NotificationService().requestPermissions();
+                    if (!granted) {
+                      setState(() {
+                        _notifyDeadlines = false;
+                      });
+                      await prefs.setNotifyDeadlines(false);
+                      if (mounted) {
+                        SnackbarHelper.showError(
+                          context,
+                          AppStrings.permissionsRequired,
+                          duration: const Duration(seconds: 4),
+                        );
+                      }
+                    }
+                  }
                 },
               ),
               
