@@ -48,13 +48,15 @@ class WidgetService {
         // Convert events to JSON format
         final eventsList = upcomingEvents.map((event) {
           final dateTime = DateTime.fromMillisecondsSinceEpoch(event.timeSort * 1000);
-          final dateStr = '${dateTime.day} ${_getMonthAbbrev(dateTime.month)}';
+          final dateStr = '${dateTime.day} ${_getHebrewMonth(dateTime.month)}';
+          final timeStr = '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
           final priority = _getPriorityForEvent(event);
 
           return {
             'name': event.name,
             'course': event.course,
             'date': dateStr,
+            'time': timeStr,
             'priority': priority,
           };
         }).toList();
@@ -155,10 +157,12 @@ class WidgetService {
     }
   }
 
-  /// Get month abbreviation in English
-  static String _getMonthAbbrev(int month) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  /// Get Hebrew month name
+  static String _getHebrewMonth(int month) {
+    const months = [
+      'ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני',
+      'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'
+    ];
     return months[month - 1];
   }
 

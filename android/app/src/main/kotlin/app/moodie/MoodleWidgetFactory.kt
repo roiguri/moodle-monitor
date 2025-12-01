@@ -18,6 +18,7 @@ class MoodleWidgetFactory(
         val name: String,
         val course: String,
         val date: String,
+        val time: String,
         val priority: String
     )
 
@@ -52,6 +53,7 @@ class MoodleWidgetFactory(
         views.setTextViewText(R.id.task_name, event.name)
         views.setTextViewText(R.id.task_course, event.course)
         views.setTextViewText(R.id.task_date, event.date)
+        views.setTextViewText(R.id.task_time, event.time)
 
         // Set priority color indicator
         val color = when (event.priority) {
@@ -98,6 +100,7 @@ class MoodleWidgetFactory(
                     name = jsonObject.getString("name"),
                     course = jsonObject.getString("course"),
                     date = jsonObject.getString("date"),
+                    time = jsonObject.optString("time", ""),
                     priority = jsonObject.getString("priority")
                 )
                 eventList.add(event)
@@ -114,6 +117,7 @@ class MoodleWidgetFactory(
         views.setTextViewText(R.id.task_name, context.getString(R.string.widget_no_task))
         views.setTextViewText(R.id.task_course, "")
         views.setTextViewText(R.id.task_date, "")
+        views.setTextViewText(R.id.task_time, "")
         return views
     }
 }
