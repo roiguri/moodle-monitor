@@ -10,8 +10,8 @@ class EventDateUtils {
     final tomorrow = today.add(const Duration(days: 1));
     final deadlineDay = DateTime(deadline.year, deadline.month, deadline.day);
 
-    if (deadlineDay.isAtSameMomentAs(today)) {
-      return EventPriority.high; // Today = Red
+    if (deadlineDay.isBefore(today) || deadlineDay.isAtSameMomentAs(today)) {
+      return EventPriority.high; // Today or Overdue = Red
     } else if (deadlineDay.isAtSameMomentAs(tomorrow)) {
       return EventPriority.medium; // Tomorrow = Orange
     } else {
