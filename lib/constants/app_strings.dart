@@ -127,6 +127,9 @@ class AppStrings {
   static const String onboardingWelcomeTitle = 'היי, אני מודי!';
   static const String onboardingWelcomeBody = 'באתי לעשות לך סדר בלוח הזמנים כדי שתוכל/י להתרכז בלימודים (ובכיף)';
   static const String onboardingNext = 'נעים להכיר!';
+  static const String onboardingContinue = 'המשך';
   static const String onboardingFinish = 'סיום';
   static const String onboardingSkip = 'דלג';
+  static const String onboardingConfigBody = 'כדי שאוכל להציג את הלו"ז הנכון, אני צריך כמה פרטים קטנים';
+  static const String onboardingTokenHelpTitle = 'איך משיגים טוקן?';
 }
