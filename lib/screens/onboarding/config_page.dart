@@ -3,6 +3,7 @@ import 'package:moodie/constants/app_strings.dart';
 import 'package:moodie/services/moodle_client.dart';
 import 'package:moodie/utils/snackbar_helper.dart';
 import 'package:moodie/screens/onboarding/onboarding_page_layout.dart';
+import 'package:moodie/widgets/moodle_credentials_form.dart';
 
 class OnboardingConfigPage extends StatefulWidget {
   final VoidCallback onNext;
@@ -20,7 +21,6 @@ class _OnboardingConfigPageState extends State<OnboardingConfigPage> {
   final _moodleClient = MoodleClient();
 
   bool _isLoading = false;
-  bool _obscureToken = true;
   bool _hasUrlError = false;
   bool _hasTokenError = false;
 
@@ -125,98 +125,26 @@ class _OnboardingConfigPageState extends State<OnboardingConfigPage> {
         key: _formKey,
         child: Column(
           children: [
-            TextFormField(
-              controller: _urlController,
-              decoration: InputDecoration(
-                labelText: AppStrings.moodleUrlLabel,
-                hintText: AppStrings.moodleUrlHint,
-                helperText: ' ',
-                border: const OutlineInputBorder(),
-                enabledBorder: _hasUrlError
-                    ? OutlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 2),
-                      )
-                    : null,
-                focusedBorder: _hasUrlError
-                    ? OutlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 2),
-                      )
-                    : null,
-                prefixIcon: const Icon(Icons.link),
-              ),
-              keyboardType: TextInputType.url,
-              onChanged: (_) {
+            MoodleCredentialsForm(
+              urlController: _urlController,
+              tokenController: _tokenController,
+              hasUrlError: _hasUrlError,
+              hasTokenError: _hasTokenError,
+              onUrlChanged: () {
                 if (_hasUrlError) {
                   setState(() {
                     _hasUrlError = false;
                   });
                 }
               },
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return AppStrings.urlRequired;
-                }
-                if (!value.trim().startsWith('http://') &&
-                    !value.trim().startsWith('https://')) {
-                  return AppStrings.urlInvalid;
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _tokenController,
-              decoration: InputDecoration(
-                labelText: AppStrings.moodleTokenLabel,
-                hintText: AppStrings.moodleTokenHint,
-                helperText: ' ',
-                border: const OutlineInputBorder(),
-                enabledBorder: _hasTokenError
-                    ? OutlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 2),
-                      )
-                    : null,
-                focusedBorder: _hasTokenError
-                    ? OutlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 2),
-                      )
-                    : null,
-                prefixIcon: const Icon(Icons.vpn_key),
-                suffixIcon: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        _obscureToken ? Icons.visibility : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureToken = !_obscureToken;
-                        });
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.info_outline),
-                      onPressed: _showTokenHelp,
-                      tooltip: AppStrings.onboardingTokenHelpTitle,
-                    ),
-                  ],
-                ),
-              ),
-              obscureText: _obscureToken,
-              onChanged: (_) {
+              onTokenChanged: () {
                 if (_hasTokenError) {
                   setState(() {
                     _hasTokenError = false;
                   });
                 }
               },
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return AppStrings.tokenRequired;
-                }
-                return null;
-              },
+              onHelpPressed: _showTokenHelp,
             ),
           ],
         ),
