@@ -264,9 +264,11 @@ class _TasksViewState extends State<TasksView> {
       final hiddenCourses = await prefsService.getHiddenCourses();
       
       return _events!.where((event) {
-        final isHiddenCourse = hiddenCourses.contains(event.courseid.toString());
-        final isIgnoredEvent = _ignoredEventIds.contains(event.id.toString());
-        return !isHiddenCourse && !isIgnoredEvent;
+        return MoodleClient.isEventVisible(
+          event, 
+          hiddenCourses, 
+          _ignoredEventIds.toList(), // Convert Set to List
+        );
       }).toList();
     } catch (e) {
       // If there's any error loading preferences, return all events

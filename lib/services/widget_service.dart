@@ -35,7 +35,7 @@ class WidgetService {
   static Future<void> updateWidget() async {
     try {
       final client = MoodleClient();
-      final events = await client.fetchDeadlines();
+      final events = await client.fetchVisibleDeadlines();
 
       if (events.isEmpty) {
         await HomeWidget.saveWidgetData<bool>('is_empty', true);
