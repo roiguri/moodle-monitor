@@ -1,81 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- List item layout for each task in the widget ListView -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/task_item_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingTop="2dp"
-    android:paddingBottom="2dp"
     android:layoutDirection="rtl">
 
-    <!-- Priority Color Indicator -->
-    <ImageView
-        android:id="@+id/task_indicator"
-        android:layout_width="3dp"
-        android:layout_height="40dp"
-        android:contentDescription="@string/cd_priority_indicator"
-        android:layout_marginStart="6dp"/>
-
-    <!-- Task Info (Name + Course) -->
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_marginStart="12dp">
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
 
-        <TextView
-            android:id="@+id/task_name"
-            android:layout_width="match_parent"
+        <!-- Priority Color Indicator -->
+        <ImageView
+            android:id="@+id/task_indicator"
+            android:layout_width="4dp"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/cd_priority_indicator"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="8dp"/>
+
+        <!-- Task Info (Name + Course) -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="14sp"
-            android:textColor="@color/widget_text_primary"
-            android:fontFamily="sans-serif"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textAlignment="viewStart"/>
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/task_course"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="12sp"
-            android:textColor="@color/widget_text_secondary"
-            android:fontFamily="sans-serif"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textAlignment="viewStart"/>
-    </LinearLayout>
+            <TextView
+                android:id="@+id/task_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="14sp"
+                android:textColor="@color/widget_text_primary"
+                android:fontFamily="sans-serif"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textAlignment="viewStart"/>
 
-    <!-- Due Date -->
-    <!-- Date and Time -->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="end"
-        android:layout_marginEnd="8dp">
+            <TextView
+                android:id="@+id/task_course"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="12sp"
+                android:textColor="@color/widget_text_secondary"
+                android:fontFamily="sans-serif"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textAlignment="viewStart"/>
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/task_date"
+        <!-- Date and Time -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="12sp"
-            android:textColor="@color/widget_text_secondary"
-            android:fontFamily="sans-serif-condensed"
-            android:textStyle="bold"/>
+            android:orientation="vertical"
+            android:gravity="end"
+            android:layout_marginStart="8dp">
 
-        <TextView
-            android:id="@+id/task_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="11sp"
-            android:textColor="@color/widget_text_secondary"
-            android:fontFamily="sans-serif-condensed"/>
+            <TextView
+                android:id="@+id/task_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="12sp"
+                android:textColor="@color/widget_text_secondary"
+                android:fontFamily="sans-serif-condensed"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/task_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="11sp"
+                android:textColor="@color/widget_text_secondary"
+                android:fontFamily="sans-serif-condensed"/>
+        </LinearLayout>
+
     </LinearLayout>
-
-</LinearLayout>
+</FrameLayout>

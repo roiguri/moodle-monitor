@@ -3,7 +3,7 @@
     android:description="@string/widget_description"
     android:initialLayout="@layout/widget_layout_listview"
     android:minWidth="146dp"
-    android:minHeight="146dp"
+    android:minHeight="110dp"
     android:previewImage="@mipmap/ic_launcher"
     android:resizeMode="horizontal|vertical"
     android:targetCellWidth="2"
