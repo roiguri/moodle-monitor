@@ -3,6 +3,7 @@ import 'package:moodie/screens/main_screen.dart';
 import 'package:moodie/screens/onboarding/config_page.dart';
 import 'package:moodie/screens/onboarding/permissions_page.dart';
 import 'package:moodie/screens/onboarding/welcome_page.dart';
+import 'package:moodie/screens/onboarding/widget_page.dart';
 import 'package:moodie/services/preferences_service.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -57,6 +58,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           children: [
             WelcomePage(onNext: _nextPage),
             OnboardingConfigPage(onNext: _nextPage),
+            WidgetPage(onNext: _nextPage),
             OnboardingPermissionsPage(onFinish: _finishOnboarding),
           ],
         ),

@@ -132,4 +132,8 @@ class AppStrings {
   static const String onboardingSkip = 'דלג';
   static const String onboardingConfigBody = 'כדי שאוכל להציג את הלו"ז הנכון, אני צריך כמה פרטים קטנים';
   static const String onboardingTokenHelpTitle = 'איך משיגים טוקן?';
+  
+  static const String onboardingWidgetTitle = 'הלו"ז תמיד מול העיניים';
+  static const String onboardingWidgetBody = 'יש לי ווידג\'ט מעולה למסך הבית. ככה לא צריך לפתוח את האפליקציה כדי לראות מה השיעור הבא!';
+  static const String onboardingWidgetButton = 'נשמע מעולה!';
 }

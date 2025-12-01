@@ -79,6 +79,7 @@ flutter:
     - assets/images/no_tasks_transparent.webp
     - assets/images/introduction-screen-transparent.webp
     - assets/images/sign-up-screen-transparent.webp
+    - assets/images/tasks-screen-transparent.webp
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
