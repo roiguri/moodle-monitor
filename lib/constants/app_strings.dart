@@ -123,4 +123,10 @@ class AppStrings {
   static const String alertTime2Days = 'יומיים לפני';
   static const String permissionsRequired = 'נדרשת הרשאה כדי לאפשר התראות';
 
+  // Onboarding
+  static const String onboardingWelcomeTitle = 'היי, אני מודי!';
+  static const String onboardingWelcomeBody = 'באתי לעשות לך סדר בלוח הזמנים כדי שתוכל/י להתרכז בלימודים (ובכיף)';
+  static const String onboardingNext = 'נעים להכיר!';
+  static const String onboardingFinish = 'סיום';
+  static const String onboardingSkip = 'דלג';
 }

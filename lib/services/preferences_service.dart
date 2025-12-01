@@ -168,4 +168,17 @@ class PreferencesService {
   Future<bool> clearAll() async {
     return await _prefs.clear();
   }
+
+  // --- Onboarding ---
+  static const String _keyIsOnboarded = 'is_onboarded';
+
+  /// Check if user has completed onboarding
+  bool getIsOnboarded() {
+    return _prefs.getBool(_keyIsOnboarded) ?? false;
+  }
+
+  /// Set onboarding completion status
+  Future<bool> setIsOnboarded(bool value) async {
+    return await _prefs.setBool(_keyIsOnboarded, value);
+  }
 }

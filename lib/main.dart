@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:moodie/screens/main_screen.dart';
+import 'package:moodie/screens/onboarding/onboarding_screen.dart';
 import 'package:moodie/services/widget_service.dart';
 import 'package:moodie/constants/app_theme.dart';
 import 'package:moodie/services/preferences_service.dart';
@@ -22,19 +23,25 @@ class MoodieApp extends StatefulWidget {
 
 class _MoodieAppState extends State<MoodieApp> {
   ThemeMode _themeMode = ThemeMode.system;
+  bool? _isOnboarded;
 
   @override
   void initState() {
     super.initState();
-    _loadTheme();
+    _loadPreferences();
   }
 
-  Future<void> _loadTheme() async {
+  Future<void> _loadPreferences() async {
     final prefs = await PreferencesService.getInstance();
     final savedTheme = prefs.getThemeMode();
-    setState(() {
-      _themeMode = _getThemeModeFromString(savedTheme);
-    });
+    final isOnboarded = prefs.getIsOnboarded();
+    
+    if (mounted) {
+      setState(() {
+        _themeMode = _getThemeModeFromString(savedTheme);
+        _isOnboarded = isOnboarded;
+      });
+    }
   }
 
   ThemeMode _getThemeModeFromString(String theme) {
@@ -70,6 +77,15 @@ class _MoodieAppState extends State<MoodieApp> {
 
   @override
   Widget build(BuildContext context) {
+    // Show splash or loading while checking preferences
+    if (_isOnboarded == null) {
+      return MaterialApp(
+        home: const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    }
+
     return MaterialApp(
       title: 'Moodie',
       localizationsDelegates: const [
@@ -85,7 +101,9 @@ class _MoodieAppState extends State<MoodieApp> {
       theme: AppTheme.getLightTheme(),
       darkTheme: AppTheme.getDarkTheme(),
       themeMode: _themeMode,
-      home: MainScreen(onThemeChanged: _changeTheme),
+      home: _isOnboarded! 
+          ? MainScreen(onThemeChanged: _changeTheme)
+          : OnboardingScreen(onThemeChanged: _changeTheme),
     );
   }
 }
