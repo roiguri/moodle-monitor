@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:moodie/services/moodle_client.dart';
 import 'package:moodie/constants/app_strings.dart';
 import 'package:moodie/utils/snackbar_helper.dart';
 
 import 'package:moodie/services/preferences_service.dart';
 import 'package:moodie/services/notification_service.dart';
-import 'package:moodie/services/widget_service.dart';
+import 'package:moodie/widgets/moodle_credentials_form.dart';
 
 /// SettingsView allows users to configure app settings
 /// Including Moodle credentials and theme preferences
@@ -15,10 +14,10 @@ class SettingsView extends StatefulWidget {
   final Function(ThemeMode)? onThemeChanged;
 
   const SettingsView({
-    Key? key,
+    super.key,
     this.onCredentialsSaved,
     this.onThemeChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<SettingsView> createState() => _SettingsViewState();
@@ -34,7 +33,6 @@ class _SettingsViewState extends State<SettingsView> {
 
   bool _isLoading = false;
   bool _isSaving = false;
-  bool _obscureToken = true;
   
   // Validation error states
   bool _hasUrlError = false;
@@ -389,88 +387,30 @@ class _SettingsViewState extends State<SettingsView> {
               ),
               const SizedBox(height: 16),
 
-              TextFormField(
-                controller: _urlController,
-                decoration: InputDecoration(
-                  labelText: AppStrings.moodleUrlLabel,
-                  hintText: AppStrings.moodleUrlHint,
-                  border: const OutlineInputBorder(),
-                  enabledBorder: _hasUrlError
-                      ? OutlineInputBorder(
-                          borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 2),
-                        )
-                      : null,
-                  focusedBorder: _hasUrlError
-                      ? OutlineInputBorder(
-                          borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 2),
-                        )
-                      : null,
-                  prefixIcon: const Icon(Icons.link),
-                ),
-                keyboardType: TextInputType.url,
-                onChanged: (_) {
-                  // Clear error state when user starts typing
+              MoodleCredentialsForm(
+                urlController: _urlController,
+                tokenController: _tokenController,
+                hasUrlError: _hasUrlError,
+                hasTokenError: _hasTokenError,
+                onUrlChanged: () {
                   if (_hasUrlError) {
                     setState(() {
                       _hasUrlError = false;
                     });
                   }
                 },
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return AppStrings.urlRequired;
-                  }
-                  if (!value.trim().startsWith('http://') &&
-                      !value.trim().startsWith('https://')) {
-                    return AppStrings.urlInvalid;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-              TextFormField(
-                controller: _tokenController,
-                decoration: InputDecoration(
-                  labelText: AppStrings.moodleTokenLabel,
-                  hintText: AppStrings.moodleTokenHint,
-                  border: const OutlineInputBorder(),
-                  enabledBorder: _hasTokenError
-                      ? OutlineInputBorder(
-                          borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 2),
-                        )
-                      : null,
-                  focusedBorder: _hasTokenError
-                      ? OutlineInputBorder(
-                          borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 2),
-                        )
-                      : null,
-                  prefixIcon: const Icon(Icons.vpn_key),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureToken ? Icons.visibility : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscureToken = !_obscureToken;
-                      });
-                    },
-                  ),
-                ),
-                obscureText: _obscureToken,
-                onChanged: (_) {
-                  // Clear error state when user starts typing
+                onTokenChanged: () {
                   if (_hasTokenError) {
                     setState(() {
                       _hasTokenError = false;
                     });
                   }
                 },
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return AppStrings.tokenRequired;
-                  }
-                  return null;
-                },
+                // No help button in SettingsView currently, but could be added if desired.
+                // The original code didn't have the help button inside the form field, 
+                // but had a separate "How to get token" section at the bottom.
+                // We can keep it that way or integrate it. 
+                // For now, let's leave it null to match original behavior of just fields.
               ),
               const SizedBox(height: 32),
               SizedBox(

@@ -38,10 +38,6 @@ class _MainScreenState extends State<MainScreen> {
     // Refresh both views after credentials are saved
     _refreshTasks?.call();
     _refreshCourses?.call();
-    // Navigate to Dashboard tab
-    setState(() {
-      _selectedIndex = 0;
-    });
   }
 
   @override

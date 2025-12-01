@@ -48,6 +48,7 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   timezone: ^0.10.0
   flutter_timezone: ^3.0.1
+  google_fonts: ^6.3.2
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +77,10 @@ flutter:
   assets:
     - assets/images/logo.png
     - assets/images/no_tasks_transparent.webp
+    - assets/images/introduction-screen-transparent.webp
+    - assets/images/sign-up-screen-transparent.webp
+    - assets/images/tasks-screen-transparent.webp
+    - assets/images/notifications-screen-transparent.webp
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

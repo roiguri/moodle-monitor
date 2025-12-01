@@ -123,4 +123,22 @@ class AppStrings {
   static const String alertTime2Days = 'יומיים לפני';
   static const String permissionsRequired = 'נדרשת הרשאה כדי לאפשר התראות';
 
+  // Onboarding
+  static const String onboardingWelcomeTitle = 'היי, אני מודי!';
+  static const String onboardingWelcomeBody = 'באתי לעשות לך סדר בלוח הזמנים כדי שתוכל/י להתרכז בלימודים (ובכיף)';
+  static const String onboardingNext = 'נעים להכיר!';
+  static const String onboardingContinue = 'המשך';
+  static const String onboardingFinish = 'סיום';
+  static const String onboardingSkip = 'דלג';
+  static const String onboardingConfigBody = 'כדי שאוכל להציג את הלו"ז הנכון, אני צריך כמה פרטים קטנים';
+  static const String onboardingTokenHelpTitle = 'איך משיגים טוקן?';
+  
+  static const String onboardingWidgetTitle = 'הלו"ז תמיד מול העיניים';
+  static const String onboardingWidgetBody = 'רק דבר קטן אחרון, יש לי ווידג\'ט מעולה למסך הבית. ככה לא צריך לפתוח את האפליקציה כדי לראות מה השיעור הבא!';
+  static const String onboardingWidgetButton = 'נשמע מעולה, בוא נתחיל!';
+
+  static const String onboardingPermissionsTitle = 'לא מפספסים כלום';
+  static const String onboardingPermissionsBody = 'רוצה שאזכיר לך לפני שזמן ההגשה מגיע, או כשקיבלת מטלה חדשה? מבטיח לא לחפור סתם';
+  static const String onboardingPermissionsButton = 'בטח, תזכיר לי';
+  static const String onboardingPermissionsSkip = 'לא עכשיו';
 }
