@@ -3,10 +3,10 @@
     android:description="@string/widget_description"
     android:initialLayout="@layout/widget_layout_listview"
     android:minWidth="146dp"
-    android:minHeight="146dp"
-    android:previewImage="@mipmap/ic_launcher"
+    android:minHeight="110dp"
+    android:previewLayout="@layout/widget_preview"
     android:resizeMode="horizontal|vertical"
-    android:targetCellWidth="2"
+    android:targetCellWidth="4"
     android:targetCellHeight="2"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen" />

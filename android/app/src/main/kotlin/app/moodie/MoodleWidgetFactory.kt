@@ -18,6 +18,7 @@ class MoodleWidgetFactory(
         val name: String,
         val course: String,
         val date: String,
+        val time: String,
         val priority: String
     )
 
@@ -52,15 +53,33 @@ class MoodleWidgetFactory(
         views.setTextViewText(R.id.task_name, event.name)
         views.setTextViewText(R.id.task_course, event.course)
         views.setTextViewText(R.id.task_date, event.date)
+        views.setTextViewText(R.id.task_time, event.time)
 
-        // Set priority color indicator
-        val color = when (event.priority) {
-            "high" -> context.getColor(R.color.priority_high)
-            "medium" -> context.getColor(R.color.priority_medium)
-            "low" -> context.getColor(R.color.priority_low)
-            else -> context.getColor(R.color.priority_default)
+        // Set priority colors (Background + Indicator)
+        val bgRes: Int
+        val indicatorRes: Int
+
+        when (event.priority) {
+            "high" -> {
+                bgRes = R.color.priority_high_bg
+                indicatorRes = R.color.priority_high_indicator
+            }
+            "medium" -> {
+                bgRes = R.color.priority_medium_bg
+                indicatorRes = R.color.priority_medium_indicator
+            }
+            "low" -> {
+                bgRes = R.color.priority_low_bg
+                indicatorRes = R.color.priority_low_indicator
+            }
+            else -> {
+                bgRes = R.color.priority_default_bg
+                indicatorRes = R.color.priority_default_indicator
+            }
         }
-        views.setInt(R.id.task_indicator, "setBackgroundColor", color)
+
+        views.setInt(R.id.task_item_root, "setBackgroundResource", bgRes)
+        views.setInt(R.id.task_indicator, "setBackgroundResource", indicatorRes)
 
         // Set up click listener to open the app
         val fillIntent = Intent()
@@ -98,6 +117,7 @@ class MoodleWidgetFactory(
                     name = jsonObject.getString("name"),
                     course = jsonObject.getString("course"),
                     date = jsonObject.getString("date"),
+                    time = jsonObject.optString("time", ""),
                     priority = jsonObject.getString("priority")
                 )
                 eventList.add(event)
@@ -114,6 +134,7 @@ class MoodleWidgetFactory(
         views.setTextViewText(R.id.task_name, context.getString(R.string.widget_no_task))
         views.setTextViewText(R.id.task_course, "")
         views.setTextViewText(R.id.task_date, "")
+        views.setTextViewText(R.id.task_time, "")
         return views
     }
 }

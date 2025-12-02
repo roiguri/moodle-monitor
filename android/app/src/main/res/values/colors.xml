@@ -10,9 +10,20 @@
     <color name="widget_text_primary">#1F2937</color> <!-- Dark gray, almost black -->
     <color name="widget_text_secondary">#6B7280</color> <!-- Medium gray -->
 
-    <!-- Priority Indicators -->
-    <color name="priority_high">#DC2626</color> <!-- Darker red for better contrast -->
-    <color name="priority_medium">#EA580C</color> <!-- Darker amber -->
-    <color name="priority_low">#2563EB</color> <!-- Darker blue -->
-    <color name="priority_default">#9CA3AF</color> <!-- Light gray -->
+    <!-- Priority Colors (Light Mode) -->
+    <!-- High Priority (Today/Overdue) -->
+    <color name="priority_high_bg">#FFEBEE</color> <!-- Pastel Red -->
+    <color name="priority_high_indicator">#EF5350</color> <!-- Strong Red -->
+
+    <!-- Medium Priority (Tomorrow) -->
+    <color name="priority_medium_bg">#FFF9E6</color> <!-- Pastel Amber -->
+    <color name="priority_medium_indicator">#FFCA28</color> <!-- Strong Amber -->
+
+    <!-- Low Priority (Future) -->
+    <color name="priority_low_bg">#E3F2FD</color> <!-- Pastel Blue -->
+    <color name="priority_low_indicator">#64B5F6</color> <!-- Strong Blue -->
+
+    <!-- Default -->
+    <color name="priority_default_bg">#F5F5F5</color> <!-- Light Gray -->
+    <color name="priority_default_indicator">#9E9E9E</color> <!-- Strong Gray -->
 </resources>
