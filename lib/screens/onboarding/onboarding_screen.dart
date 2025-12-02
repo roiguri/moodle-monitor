@@ -63,6 +63,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final dotColor = isDark ? Colors.white : Colors.black;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: WillPopScope(
           onWillPop: () async {
