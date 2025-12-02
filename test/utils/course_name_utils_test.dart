@@ -16,7 +16,6 @@ void main() {
     });
 
     test('extractHebrewName handles single occurrence of course number', () {
-       // "0609101801 - קשב ולמידה" (No English part)
        final rawName = '0609101801 - קשב ולמידה';
        final hebrewName = CourseNameUtils.extractHebrewName(rawName);
        expect(hebrewName, 'קשב ולמידה');
