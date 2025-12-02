@@ -54,6 +54,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.3
+  integration_test:
+    sdk: flutter
+  patrol: ^3.0.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -117,3 +120,10 @@ flutter_launcher_icons:
   adaptive_icon_background: "#FFFFFF"
   adaptive_icon_foreground: "assets/icon/logo.png"
   adaptive_icon_monochrome: "assets/icon/logo.png"
+
+patrol:
+  app_name: Moodie
+  android:
+    package_name: app.moodie
+  ios:
+    bundle_id: app.moodie
