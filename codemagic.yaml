@@ -1,0 +1,82 @@
+# Codemagic CI/CD configuration for Moodie Monitor
+#
+# This file defines the workflow for building and testing the iOS application.
+# It uses Codemagic's cloud-hosted macOS machines to run Xcode builds.
+
+workflows:
+  ios-sideload-build:
+    name: iOS Ad Hoc Build (Sideload)
+    # Runner type (Mac mini M2 is fast and included in the free tier)
+    instance_type: mac_mini_m2
+    
+    # Environment variables for build settings
+    environment:
+      flutter: latest
+      xcode: latest
+      cocoapods: default
+      # This variable is for the Flutter build command to ensure the app ID is correct.
+      # REPLACE this with your actual Bundle ID (e.g., app.moodie).
+      # The default Flutter bundle ID is com.example.moodie.
+      BUNDLE_ID: "com.example.moodie" 
+
+    # Triggers the build automatically when changes are pushed to the main branch
+    triggering:
+      branch: main 
+
+    # Steps in the build process
+    steps:
+      - name: Install Flutter dependencies
+        script:
+          - flutter pub get
+      
+      - name: Install Pods
+        script:
+          # Install native dependencies defined in the Podfile
+          - |
+            cd ios
+            pod install --repo-update
+        
+      - name: Configure iOS Code Signing
+        # NOTE: This step is typically handled by Codemagic's UI settings 
+        # (integrating your Apple ID and provisioning profiles).
+        # We leave the script minimal, as AltStore handles the final signing.
+        script:
+          - |
+            echo "Configuring code signing for bundle ID: $BUNDLE_ID"
+
+      - name: Create Export Options Plist
+        # This step is added to manually create the ExportOptions.plist required by the build command.
+        # Setting method to 'development' aligns with the free Apple Developer account used by AltStore.
+        script:
+          - |
+            cat << EOF > $CM_BUILD_DIR/ios/Runner/ExportOptions.plist
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>method</key>
+    <string>development</string>
+    <key>compileBitcode</key>
+    <false/>
+    <key>stripSwiftSymbols</key>
+    <true/>
+</dict>
+</plist>
+EOF
+          
+      - name: Flutter Build IPA
+        script:
+          # This command builds the final iOS archive (.ipa) that you can sideload.
+          # We use the '--no-codesign' flag here as AltStore handles the signing locally.
+          - |
+            flutter build ipa --release \
+              --target=lib/main.dart \
+              --build-name=${CM_BUILD_NUMBER} \
+              --build-number=${CM_BUILD_NUMBER} \
+              --export-options-plist=$CM_BUILD_DIR/ios/Runner/ExportOptions.plist \
+              --no-codesign 
+
+    # Output the final app file
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - $CM_BUILD_DIR/ios/Runner/ExportOptions.plist
