@@ -29,6 +29,7 @@ class WidgetService {
 
     // Note: App Group ID is only needed for iOS
     // For Android, home_widget uses SharedPreferences automatically
+    await HomeWidget.setAppGroupId('group.com.moodie.monitor');
     await _registerBackgroundTask();
   }
 
