@@ -14,11 +14,13 @@ import 'package:url_launcher/url_launcher.dart';
 class CoursesView extends StatefulWidget {
   final VoidCallback? onNavigateToSettings;
   final void Function(VoidCallback refresh)? onRefreshRequested;
+  final MoodleClient? moodleClient;
 
   const CoursesView({
     Key? key,
     this.onNavigateToSettings,
     this.onRefreshRequested,
+    this.moodleClient,
   }) : super(key: key);
 
   @override
@@ -26,7 +28,7 @@ class CoursesView extends StatefulWidget {
 }
 
 class _CoursesViewState extends State<CoursesView> {
-  final MoodleClient _moodleClient = MoodleClient();
+  late final MoodleClient _moodleClient;
   PreferencesService? _prefsService;
 
   List<MoodleCourse>? _courses;
@@ -38,6 +40,7 @@ class _CoursesViewState extends State<CoursesView> {
   @override
   void initState() {
     super.initState();
+    _moodleClient = widget.moodleClient ?? MoodleClient();
     // Register refresh callback
     widget.onRefreshRequested?.call(_loadCourses);
     _initializeAndLoadCourses();

@@ -12,11 +12,13 @@ import 'package:moodie/widgets/moodle_credentials_form.dart';
 class SettingsView extends StatefulWidget {
   final VoidCallback? onCredentialsSaved;
   final Function(ThemeMode)? onThemeChanged;
+  final MoodleClient? moodleClient;
 
   const SettingsView({
     super.key,
     this.onCredentialsSaved,
     this.onThemeChanged,
+    this.moodleClient,
   });
 
   @override
@@ -27,7 +29,7 @@ class _SettingsViewState extends State<SettingsView> {
   final _formKey = GlobalKey<FormState>();
   final _urlController = TextEditingController();
   final _tokenController = TextEditingController();
-  final _moodleClient = MoodleClient();
+  late final MoodleClient _moodleClient;
   
   ThemeMode _currentTheme = ThemeMode.system;
 
@@ -45,6 +47,7 @@ class _SettingsViewState extends State<SettingsView> {
   @override
   void initState() {
     super.initState();
+    _moodleClient = widget.moodleClient ?? MoodleClient();
     _loadExistingCredentials();
     _loadPreferences();
   }

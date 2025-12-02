@@ -20,11 +20,13 @@ import '../widgets/view_switcher.dart';
 class TasksView extends StatefulWidget {
   final VoidCallback? onNavigateToSettings;
   final void Function(VoidCallback refresh)? onRefreshRequested;
+  final MoodleClient? moodleClient;
 
   const TasksView({
     Key? key,
     this.onNavigateToSettings,
     this.onRefreshRequested,
+    this.moodleClient,
   }) : super(key: key);
 
   @override
@@ -51,7 +53,7 @@ class _TasksViewState extends State<TasksView> {
   @override
   void initState() {
     super.initState();
-    _moodleClient = MoodleClient();
+    _moodleClient = widget.moodleClient ?? MoodleClient();
     _loadIgnoredEvents();
     // Register refresh callback
     widget.onRefreshRequested?.call(_loadDeadlines);
