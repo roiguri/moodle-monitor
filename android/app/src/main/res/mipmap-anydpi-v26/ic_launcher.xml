@@ -4,17 +4,11 @@
   <foreground>
       <inset
           android:drawable="@drawable/ic_launcher_foreground"
-          android:insetLeft="26%"
-          android:insetRight="26%"
-          android:insetTop="25%"
-          android:insetBottom="28%" />
+          android:inset="16%" />
   </foreground>
   <monochrome>
       <inset
           android:drawable="@drawable/ic_launcher_monochrome"
-          android:insetLeft="26%"
-          android:insetRight="26%"
-          android:insetTop="25%"
-          android:insetBottom="28%" />
+          android:inset="16%" />
   </monochrome>
 </adaptive-icon>
