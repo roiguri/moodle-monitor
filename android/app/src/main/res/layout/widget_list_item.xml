@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- List item layout for each task in the widget ListView -->
+<!-- TODO: If you modify this file, please also update widget_preview.xml to maintain consistency. -->
+<!-- TODO: replace widget preview with actual widget layout -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/task_item_root"
     android:layout_width="match_parent"
