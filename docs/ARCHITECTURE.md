@@ -1,8 +1,8 @@
-# Moodle Monitor - Architecture Documentation
+# Moodie - Architecture Documentation
 
 ## Overview
 
-Moodle Monitor is a Flutter-based cross-platform application that provides a modern, priority-based interface for viewing Moodle assignment deadlines. The application follows a feature-based architecture with clear separation of concerns.
+Moodie is a Flutter-based cross-platform application that provides a modern, priority-based interface for viewing Moodle assignment deadlines. The application follows a feature-based architecture with clear separation of concerns.
 
 ## Architecture Principles
 
@@ -12,17 +12,12 @@ Moodle Monitor is a Flutter-based cross-platform application that provides a mod
 - **Data Layer** (`lib/models/`, `lib/services/`): Data structures and API communication
 - **Configuration** (`lib/constants/`): Centralized styling and strings
 
-### 2. **Localization-Ready**
-- All user-facing strings are centralized in `lib/constants/app_strings.dart`
-- No hardcoded strings in UI components
-- Prepared for easy migration to Flutter's `.arb` localization system
-
-### 3. **Component Reusability**
+### 2. **Component Reusability**
 - Widgets are designed to be reusable and configurable
 - Styling is consistent via centralized constants
 - Components accept parameters for customization
 
-### 4. **Stateless Where Possible**
+### 3. **Stateless Where Possible**
 - Most widgets are stateless to improve performance
 - State is only used where necessary (e.g., `HomeScreen` for data fetching)
 
@@ -35,7 +30,7 @@ lib/
 ├── main.dart                          # Application entry point
 ├── constants/                         # Configuration & styling
 │   ├── app_colors.dart               # Color palette (priority-based)
-│   ├── app_strings.dart              # Hebrew strings (localization-ready)
+│   ├── app_strings.dart              # Hebrew strings
 │   └── text_styles.dart              # Typography constants
 ├── models/                            # Data structures
 │   └── moodle_event.dart             # Event/deadline model
@@ -273,61 +268,6 @@ If the app grows in complexity, consider:
 
 ---
 
-## Localization Strategy
-
-### Current Implementation (Phase 1)
-
-**Centralized Strings** (`lib/constants/app_strings.dart`):
-```dart
-class AppStrings {
-  static const String goodMorning = 'בוקר טוב';
-  static const String today = 'היום';
-  // ... more strings
-}
-```
-
-**Benefits:**
-- All strings in one location
-- Easy to find and modify
-- No hardcoded strings in UI code
-
-### Future Migration (Phase 2)
-
-When adding English or other languages:
-
-1. **Generate ARB files:**
-   ```yaml
-   # l10n.yaml
-   arb-dir: lib/l10n
-   template-arb-file: app_he.arb
-   output-localization-file: app_localizations.dart
-   ```
-
-2. **Create `lib/l10n/app_he.arb`:**
-   ```json
-   {
-     "goodMorning": "בוקר טוב",
-     "today": "היום",
-     "multipleDeadlinesThisWeek": "יש לך {count} מטלות להגשה השבוע",
-     "@multipleDeadlinesThisWeek": {
-       "placeholders": {
-         "count": {"type": "int"}
-       }
-     }
-   }
-   ```
-
-3. **Generate Dart files:**
-   ```bash
-   flutter gen-l10n
-   ```
-
-4. **Update code to use:**
-   ```dart
-   AppLocalizations.of(context).goodMorning
-   ```
-
----
 
 ## Naming Conventions
 
@@ -468,18 +408,17 @@ Requires Xcode and Apple Developer account.
 ## Future Enhancements
 
 ### Planned Features
-1. **Dark Mode** - Toggle between light/dark themes
-2. **English Localization** - Support multiple languages
-3. **Event Icons** - Visual indicators (assignment, quiz, lab)
-4. **Clickable Cards** - Navigate to Moodle event URL
-5. **Filtering** - Filter by course or priority
-6. **Calendar View** - Alternative visualization
-7. **Notifications** - Local reminders for upcoming deadlines
-8. **Home Screen Widget** - Quick view without opening app
-9. **Background Sync** - Automatic periodic data refresh with workmanager
+1. **Event Icons** - Visual indicators (assignment, quiz, lab)
+3. **Clickable Cards** - Navigate to Moodle event URL
+4. **Filtering** - Filter by course or priority
+5. **Calendar View** - Alternative visualization
+6. **Background Sync** - Automatic periodic data refresh with workmanager
 
 ### Recently Implemented
-- ✅ **Pull-to-Refresh** - Manual data refresh via gesture
+- ✅ **Dark Mode** - Toggle between light/dark themes
+- ✅ **Smart Notifications** - Local reminders for upcoming deadlines
+- ✅ **Home Screen Widget** - Quick view without opening app
+- ✅ **Pull-to-refresh** - Manual data refresh via gesture
 - ✅ **Shimmer Loading** - Skeleton screens during load
 - ✅ **Error Handling** - User-friendly error states with retry
 

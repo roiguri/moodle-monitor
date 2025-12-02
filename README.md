@@ -1,4 +1,4 @@
-# Moodle Monitor
+# Moodie
 
 A modern Flutter application for viewing Moodle assignment deadlines with a beautiful, priority-based interface.
 
@@ -7,15 +7,17 @@ A modern Flutter application for viewing Moodle assignment deadlines with a beau
 - 🎨 **Priority-Based Design**: Color-coded cards (red for today, yellow for tomorrow, blue for future)
 - 🕐 **Time-Based Greetings**: Personalized Hebrew greetings based on time of day
 - 📊 **Smart Categorization**: Events grouped by היום, מחר, השבוע, שבוע הבא, החודש, מעל חודש
-- 📱 **Cross-Platform**: Works on Android, iOS, and Web
-- 🌍 **Localization-Ready**: Prepared for multi-language support
+- 🌙 **Dark Mode Support**: Beautiful dark theme for night usage
+- 🔔 **Smart Notifications**: Get notified about upcoming deadlines
+- 🏠 **Home Screen Widget**: View your tasks directly from your home screen
+- 📱 **Cross-Platform**: Works on Android (iOS coming soon)
 - 🎯 **Material Design 3**: Modern, clean UI following Material guidelines
 
 ## Getting Started
 
 ### Prerequisites
 
-- Flutter SDK (≥3.0.0)
+- Flutter SDK (≥3.10.1)
 - Dart SDK (≥3.0.0)
 - A Moodle account with API access
 
@@ -113,11 +115,6 @@ flutter build appbundle --release
 flutter build ios --release
 ```
 
-### Web
-```bash
-flutter build web --release
-```
-
 ## Testing
 
 ```bash
@@ -136,25 +133,9 @@ flutter test --coverage
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## Roadmap
-
-- [ ] Dark mode support
-- [ ] English localization
-- [ ] Event icons (assignment, quiz, lab)
-- [ ] Click to open event in browser
-- [ ] Pull-to-refresh
-- [ ] Filtering by course
-- [ ] Calendar view
-- [ ] Push notifications
-- [ ] Home screen widget
-
 ## Known Issues
 
 See the [issues page](../../issues) for known bugs and planned enhancements.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgments
 
