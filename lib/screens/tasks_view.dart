@@ -392,6 +392,9 @@ class _TasksViewState extends State<TasksView> {
     await prefs.ignoreEvent(event.id);
     await _loadIgnoredEvents(); // Refresh state to hide card immediately
     
+    // Update widget instantly using cached events
+    await WidgetService.updateWidget(cachedEvents: _events);
+
     if (mounted) {
       SnackbarHelper.showInfo(context, AppStrings.taskHidden);
     }
@@ -402,6 +405,9 @@ class _TasksViewState extends State<TasksView> {
     await prefs.unignoreEvent(event.id);
     await _loadIgnoredEvents();
     
+    // Update widget instantly using cached events
+    await WidgetService.updateWidget(cachedEvents: _events);
+
     if (mounted) {
       SnackbarHelper.showSuccess(context, AppStrings.taskRestored);
     }

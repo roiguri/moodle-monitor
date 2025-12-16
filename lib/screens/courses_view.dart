@@ -9,6 +9,7 @@ import 'package:moodie/widgets/shimmer_courses_loading_view.dart';
 import 'package:moodie/widgets/error_state_view.dart';
 import 'package:moodie/widgets/credentials_required_view.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:moodie/services/widget_service.dart';
 
 /// CoursesView displays all user's courses with hide/show functionality
 class CoursesView extends StatefulWidget {
@@ -116,6 +117,8 @@ class _CoursesViewState extends State<CoursesView> {
     if (_prefsService != null) {
       await _prefsService!.toggleCourseVisibility(courseId);
       await _loadHiddenCourses();
+      // Update widget to reflect hidden course (requires fetch as we don't have events here)
+      WidgetService.updateWidget();
     }
   }
 

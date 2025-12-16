@@ -6,6 +6,7 @@ import 'package:moodie/utils/snackbar_helper.dart';
 import 'package:moodie/services/preferences_service.dart';
 import 'package:moodie/services/notification_service.dart';
 import 'package:moodie/widgets/moodle_credentials_form.dart';
+import 'package:moodie/services/widget_service.dart';
 
 /// SettingsView allows users to configure app settings
 /// Including Moodle credentials and theme preferences
@@ -204,6 +205,9 @@ class _SettingsViewState extends State<SettingsView> {
         _urlController.clear();
         _tokenController.clear();
       });
+
+      // Update widget to clear data
+      WidgetService.updateWidget();
 
       if (mounted) {
         SnackbarHelper.showInfo(

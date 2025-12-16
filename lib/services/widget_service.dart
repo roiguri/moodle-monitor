@@ -33,10 +33,28 @@ class WidgetService {
   }
 
   /// Fetch data and update the widget
-  static Future<void> updateWidget() async {
+  /// [cachedEvents] Optional list of events to use instead of fetching (for offline/instant updates)
+  static Future<void> updateWidget({List<MoodleEvent>? cachedEvents}) async {
     try {
-      final client = MoodleClient();
-      final events = await client.fetchVisibleDeadlines();
+      List<MoodleEvent> events;
+
+      if (cachedEvents != null) {
+        // Use cached events but apply visibility filter
+        final prefs = await PreferencesService.getInstance();
+        // Reload to ensure we have the latest ignored list (especially if just updated)
+        await prefs.reload();
+
+        final hiddenCourses = await prefs.getHiddenCourses();
+        final ignoredEvents = await prefs.getIgnoredEvents();
+
+        events = cachedEvents.where((event) {
+          return MoodleClient.isEventVisible(event, hiddenCourses, ignoredEvents);
+        }).toList();
+      } else {
+        // Fetch fresh data
+        final client = MoodleClient();
+        events = await client.fetchVisibleDeadlines();
+      }
 
       if (events.isEmpty) {
         await HomeWidget.saveWidgetData<bool>('is_empty', true);

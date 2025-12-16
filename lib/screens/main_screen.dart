@@ -6,6 +6,8 @@ import 'package:moodie/services/moodle_client.dart';
 import 'package:moodie/constants/app_strings.dart';
 import 'package:moodie/utils/snackbar_helper.dart';
 import 'package:moodie/services/notification_service.dart';
+import 'package:moodie/services/preferences_service.dart';
+import 'package:moodie/services/cache_service.dart';
 
 /// MainScreen is the primary navigation container
 /// Manages bottom navigation bar and view switching
@@ -21,7 +23,7 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   int _selectedIndex = 0;
   final _moodleClient = MoodleClient();
   bool _isCheckingCredentials = true;
@@ -43,8 +45,33 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     NotificationService().initialize();
     _checkCredentials();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _handleAppResume();
+    }
+  }
+
+  Future<void> _handleAppResume() async {
+    // Reload preferences to pick up changes from widget/background tasks
+    final prefs = await PreferencesService.getInstance();
+    await prefs.reload();
+    await CacheService().reload();
+
+    // Refresh views if they are loaded
+    _refreshTasks?.call();
+    // We could refresh courses too, but it's less critical and might be redundant
   }
 
   Future<void> _checkCredentials() async {
@@ -78,6 +105,11 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       _selectedIndex = index;
     });
+
+    // Refresh tasks when switching to tasks view to ensure sync (e.g. after hiding courses)
+    if (index == 0) {
+      _refreshTasks?.call();
+    }
   }
 
   @override

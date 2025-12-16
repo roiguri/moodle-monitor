@@ -32,4 +32,10 @@ class CacheService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_keyKnownTaskIds);
   }
+
+  /// Reloads the preferences from disk.
+  Future<void> reload() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
+  }
 }

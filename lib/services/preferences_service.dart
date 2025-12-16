@@ -194,4 +194,10 @@ class PreferencesService {
   Future<bool> setIsFirstFetchCompleted(bool value) async {
     return await _prefs.setBool(_keyIsFirstFetchCompleted, value);
   }
+
+  /// Reloads the preferences from disk.
+  /// Useful when preferences might have been changed by another process (e.g., widget).
+  Future<void> reload() async {
+    await _prefs.reload();
+  }
 }
