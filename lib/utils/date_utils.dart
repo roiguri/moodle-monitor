@@ -1,4 +1,4 @@
-import 'package:moodie/models/moodle_event.dart';
+import 'package:moodie/models/app_event.dart';
 import 'package:moodie/constants/app_strings.dart';
 
 enum EventPriority { high, medium, low }
@@ -19,18 +19,20 @@ class EventDateUtils {
     }
   }
 
-  static Map<String, List<MoodleEvent>> groupEventsByDate(List<MoodleEvent> events) {
-    final Map<String, List<MoodleEvent>> groupedEvents = {};
+  static Map<String, List<AppEvent>> groupEventsByDate(List<AppEvent> events) {
+    final Map<String, List<AppEvent>> groupedEvents = {};
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
     for (final event in events) {
-      final deadline = DateTime.fromMillisecondsSinceEpoch(event.timeSort * 1000);
+      final deadline = event.date;
       final deadlineDay = DateTime(deadline.year, deadline.month, deadline.day);
       final daysUntil = deadlineDay.difference(today).inDays;
 
       String dayKey;
-      if (daysUntil == 0) {
+      if (daysUntil < 0) {
+        dayKey = AppStrings.expired; // Overdue
+      } else if (daysUntil == 0) {
         dayKey = AppStrings.today;
       } else if (daysUntil == 1) {
         dayKey = AppStrings.tomorrow;
@@ -51,11 +53,12 @@ class EventDateUtils {
     return groupedEvents;
   }
 
-  static List<String> getSortedDayKeys(Map<String, List<MoodleEvent>> grouped) {
+  static List<String> getSortedDayKeys(Map<String, List<AppEvent>> grouped) {
     final dayKeys = grouped.keys.toList();
 
     // Define order
     final order = [
+      AppStrings.expired,
       AppStrings.today,
       AppStrings.tomorrow,
       AppStrings.next7Days,

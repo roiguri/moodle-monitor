@@ -49,6 +49,8 @@ dependencies:
   timezone: ^0.10.0
   flutter_timezone: ^3.0.1
   google_fonts: ^6.3.2
+  sqflite: ^2.3.0
+  path: ^1.8.3
 
 dev_dependencies:
   flutter_test:

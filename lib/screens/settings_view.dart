@@ -40,6 +40,7 @@ class _SettingsViewState extends State<SettingsView> {
 
   bool _notifyNewTasks = true;
   bool _notifyDeadlines = true;
+  bool _notifyCustomTasks = false;
   List<int> _deadlineAlerts = [60];
 
   @override
@@ -54,6 +55,7 @@ class _SettingsViewState extends State<SettingsView> {
     final savedTheme = prefs.getThemeMode();
     final notifyNewTasks = prefs.getNotifyNewTasks();
     final notifyDeadlines = prefs.getNotifyDeadlines();
+    final notifyCustomTasks = prefs.getNotifyCustomTasks();
     final deadlineAlerts = prefs.getDeadlineAlerts();
 
     if (mounted) {
@@ -61,6 +63,7 @@ class _SettingsViewState extends State<SettingsView> {
         _currentTheme = _getThemeModeFromString(savedTheme);
         _notifyNewTasks = notifyNewTasks;
         _notifyDeadlines = notifyDeadlines;
+        _notifyCustomTasks = notifyCustomTasks;
         _deadlineAlerts = deadlineAlerts;
       });
     }
@@ -222,6 +225,22 @@ class _SettingsViewState extends State<SettingsView> {
     super.dispose();
   }
 
+  Future<void> _requestPermissionsIfNeeded(bool value, Function(bool) revert) async {
+    if (value) {
+      final granted = await NotificationService().requestPermissions();
+      if (!granted) {
+        revert(false);
+        if (mounted) {
+          SnackbarHelper.showError(
+            context,
+            AppStrings.permissionsRequired,
+            duration: const Duration(seconds: 4),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -307,22 +326,10 @@ class _SettingsViewState extends State<SettingsView> {
                   });
                   final prefs = await PreferencesService.getInstance();
                   await prefs.setNotifyNewTasks(value);
-                  if (value) {
-                    final granted = await NotificationService().requestPermissions();
-                    if (!granted) {
-                      setState(() {
-                        _notifyNewTasks = false;
-                      });
-                      await prefs.setNotifyNewTasks(false);
-                      if (mounted) {
-                        SnackbarHelper.showError(
-                          context,
-                          AppStrings.permissionsRequired,
-                          duration: const Duration(seconds: 4),
-                        );
-                      }
-                    }
-                  }
+                  await _requestPermissionsIfNeeded(value, (val) async {
+                    setState(() => _notifyNewTasks = val);
+                    await prefs.setNotifyNewTasks(val);
+                  });
                 },
               ),
               SwitchListTile(
@@ -335,26 +342,30 @@ class _SettingsViewState extends State<SettingsView> {
                   });
                   final prefs = await PreferencesService.getInstance();
                   await prefs.setNotifyDeadlines(value);
-                  if (value) {
-                    final granted = await NotificationService().requestPermissions();
-                    if (!granted) {
-                      setState(() {
-                        _notifyDeadlines = false;
-                      });
-                      await prefs.setNotifyDeadlines(false);
-                      if (mounted) {
-                        SnackbarHelper.showError(
-                          context,
-                          AppStrings.permissionsRequired,
-                          duration: const Duration(seconds: 4),
-                        );
-                      }
-                    }
-                  }
+                  await _requestPermissionsIfNeeded(value, (val) async {
+                    setState(() => _notifyDeadlines = val);
+                    await prefs.setNotifyDeadlines(val);
+                  });
+                },
+              ),
+              SwitchListTile(
+                title: const Text(AppStrings.notifyCustomTasks),
+                subtitle: const Text(AppStrings.notifyCustomTasksDesc),
+                value: _notifyCustomTasks,
+                onChanged: (bool value) async {
+                  setState(() {
+                    _notifyCustomTasks = value;
+                  });
+                  final prefs = await PreferencesService.getInstance();
+                  await prefs.setNotifyCustomTasks(value);
+                  await _requestPermissionsIfNeeded(value, (val) async {
+                    setState(() => _notifyCustomTasks = val);
+                    await prefs.setNotifyCustomTasks(val);
+                  });
                 },
               ),
               
-              if (_notifyDeadlines) ...[
+              if (_notifyDeadlines || _notifyCustomTasks) ...[
                 const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -406,11 +417,6 @@ class _SettingsViewState extends State<SettingsView> {
                     });
                   }
                 },
-                // No help button in SettingsView currently, but could be added if desired.
-                // The original code didn't have the help button inside the form field, 
-                // but had a separate "How to get token" section at the bottom.
-                // We can keep it that way or integrate it. 
-                // For now, let's leave it null to match original behavior of just fields.
               ),
               const SizedBox(height: 32),
               SizedBox(
@@ -484,7 +490,6 @@ class _SettingsViewState extends State<SettingsView> {
       ),
     );
   }
-
 
   Widget _buildAlertOption(int minutes, String label) {
     return CheckboxListTile(

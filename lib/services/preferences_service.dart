@@ -71,22 +71,20 @@ class PreferencesService {
   }
 
   /// Add an event to the ignore list
-  Future<bool> ignoreEvent(int eventId) async {
+  Future<bool> ignoreEvent(String eventId) async {
     final ignored = await getIgnoredEvents();
-    final idStr = eventId.toString();
-    if (!ignored.contains(idStr)) {
-      ignored.add(idStr);
+    if (!ignored.contains(eventId)) {
+      ignored.add(eventId);
       return await _prefs.setStringList(_keyIgnoredEvents, ignored);
     }
     return true;
   }
 
   /// Un-ignore an event (optional, for undo functionality)
-  Future<bool> unignoreEvent(int eventId) async {
+  Future<bool> unignoreEvent(String eventId) async {
     final ignored = await getIgnoredEvents();
-    final idStr = eventId.toString();
-    if (ignored.contains(idStr)) {
-      ignored.remove(idStr);
+    if (ignored.contains(eventId)) {
+      ignored.remove(eventId);
       return await _prefs.setStringList(_keyIgnoredEvents, ignored);
     }
     return true;
@@ -126,6 +124,7 @@ class PreferencesService {
   // --- Notification Settings ---
   static const String _keyNotifyNewTasks = 'notify_new_tasks';
   static const String _keyNotifyDeadlines = 'notify_deadlines';
+  static const String _keyNotifyCustomTasks = 'notify_custom_tasks';
 
   /// Get new task notification preference (default: true)
   bool getNotifyNewTasks() {
@@ -145,6 +144,16 @@ class PreferencesService {
   /// Set deadline notification preference
   Future<bool> setNotifyDeadlines(bool enabled) async {
     return await _prefs.setBool(_keyNotifyDeadlines, enabled);
+  }
+
+  /// Get custom task notification preference (default: false)
+  bool getNotifyCustomTasks() {
+    return _prefs.getBool(_keyNotifyCustomTasks) ?? false;
+  }
+
+  /// Set custom task notification preference
+  Future<bool> setNotifyCustomTasks(bool enabled) async {
+    return await _prefs.setBool(_keyNotifyCustomTasks, enabled);
   }
 
   static const String _keyDeadlineAlerts = 'deadline_alerts';

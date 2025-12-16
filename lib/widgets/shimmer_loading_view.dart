@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:moodie/widgets/greeting_header.dart';
 import 'package:moodie/widgets/shimmer_event_card.dart';
-import 'package:moodie/widgets/view_switcher.dart';
+import 'package:moodie/widgets/filter_menu_button.dart';
 import 'package:moodie/utils/date_utils.dart';
 import 'package:moodie/constants/app_strings.dart';
 
@@ -21,7 +21,14 @@ class ShimmerLoadingView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GreetingHeader(
-            trailingWidget: ViewSwitcher(onViewChanged: (_) {}),
+            trailingWidget: FilterMenuButton(
+              currentView: ViewType.day,
+              currentFilter: FilterType.all,
+              showHidden: false,
+              onViewChanged: (_) {},
+              onFilterChanged: (_) {},
+              onShowHiddenChanged: (_) {},
+            ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

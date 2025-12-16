@@ -1,6 +1,7 @@
 import 'package:moodie/utils/course_name_utils.dart';
+import 'package:moodie/models/app_event.dart';
 
-class MoodleEvent {
+class MoodleEvent implements AppEvent {
   final int id;
   final String name;
   final String course;
@@ -56,5 +57,21 @@ class MoodleEvent {
     );
   }
 
-  String get uniqueId => id.toString();
+  @override
+  String get uniqueId => 'moodle_$id';
+
+  @override
+  String get title => name;
+
+  @override
+  DateTime get date => DateTime.fromMillisecondsSinceEpoch(timeSort * 1000);
+
+  @override
+  bool get isCompleted => false; // Moodle events fetched are typically incomplete
+
+  @override
+  String get courseName => course;
+
+  @override
+  AppEventType get type => AppEventType.moodleDeadline;
 }

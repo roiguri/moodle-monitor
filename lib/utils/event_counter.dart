@@ -1,14 +1,14 @@
-import 'package:moodie/models/moodle_event.dart';
+import 'package:moodie/models/app_event.dart';
 import 'package:moodie/constants/app_strings.dart';
 
 class EventCounter {
-  static int countEventsThisWeek(List<MoodleEvent> events) {
+  static int countEventsThisWeek(List<AppEvent> events) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final weekFromNow = today.add(const Duration(days: 7));
 
     return events.where((event) {
-      final deadline = DateTime.fromMillisecondsSinceEpoch(event.timeSort * 1000);
+      final deadline = event.date;
       final deadlineDay = DateTime(deadline.year, deadline.month, deadline.day);
 
       return deadlineDay.isAfter(today.subtract(const Duration(days: 1))) &&

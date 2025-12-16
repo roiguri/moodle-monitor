@@ -11,6 +11,7 @@ class AppStrings {
   static const String next7Days = '7 הימים הבאים';
   static const String next30Days = '30 הימים הבאים';
   static const String later = 'מאוחר יותר';
+  static const String expired = 'פג תוקף';
 
   // Summary
   static const String noDeadlinesThisWeek = 'אין מטלות השבוע';
@@ -56,6 +57,14 @@ class AppStrings {
   static const String hideCourse = 'הסתר קורס';
   static const String openInMoodle = 'פתח ב-Moodle';
   static const String fetchCoursesError = 'שגיאה בטעינת קורסים';
+
+  // Filter
+  static const String filterTitle = 'סינון ותצוגה';
+  static const String viewDay = 'תצוגה יומית';
+  static const String viewCourse = 'תצוגה לפי קורס';
+  static const String filterAll = 'הכל';
+  static const String filterDeadlines = 'דדליינים בלבד';
+  static const String filterTasks = 'משימות אישיות בלבד';
 
   // Settings
   static const String settingsTitle = 'הגדרות';
@@ -117,6 +126,8 @@ class AppStrings {
   static const String notifyNewTasksDesc = 'קבל התראה כשמטלה חדשה מתגלה';
   static const String notifyDeadlines = 'תזכורת דדליין';
   static const String notifyDeadlinesDesc = 'קבל התראה לפני מועד ההגשה';
+  static const String notifyCustomTasks = 'תזכורת למשימות אישיות';
+  static const String notifyCustomTasksDesc = 'קבל התראה עבור משימות שיצרת';
   static const String alertTime15Minutes = '15 דקות לפני';
   static const String alertTime1Hour = 'שעה לפני';
   static const String alertTime1Day = 'יום לפני';

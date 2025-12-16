@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moodie/models/moodle_event.dart';
+import 'package:moodie/models/app_event.dart';
 import 'package:moodie/utils/date_utils.dart';
 import 'package:moodie/widgets/event_card.dart';
 import 'package:moodie/constants/text_styles.dart';
@@ -7,12 +7,12 @@ import 'package:moodie/constants/app_strings.dart';
 
 class EventSection extends StatelessWidget {
   final String title;
-  final List<MoodleEvent> events;
+  final List<AppEvent> events;
   final EventPriority? priority;
   final bool showCourse;
-  final Function(MoodleEvent)? onIgnore;
-  final Function(MoodleEvent)? onMarkDone;
-  final Function(MoodleEvent)? onRestore;
+  final Function(AppEvent)? onIgnore;
+  final Function(AppEvent)? onMarkDone;
+  final Function(AppEvent)? onRestore;
 
   const EventSection({
     Key? key,
@@ -41,12 +41,10 @@ class EventSection extends StatelessWidget {
             ),
           ),
         ...events.map((event) {
-          final eventPriority = priority ?? EventDateUtils.getPriority(
-            DateTime.fromMillisecondsSinceEpoch(event.timeSort * 1000),
-          );
+          final eventPriority = priority ?? EventDateUtils.getPriority(event.date);
           
           return Dismissible(
-            key: Key('event_${event.id}'),
+            key: Key('event_${event.uniqueId}'),
             background: onRestore != null
                 ? _buildSwipeAction(
                     Icons.restore,

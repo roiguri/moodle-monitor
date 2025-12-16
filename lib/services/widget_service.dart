@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:moodie/models/app_event.dart';
 import 'package:moodie/models/moodle_event.dart';
+import 'package:moodie/models/custom_event.dart';
 import 'package:moodie/services/moodle_client.dart';
+import 'package:moodie/services/database_service.dart';
 import 'package:moodie/utils/date_utils.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:moodie/services/notification_service.dart';
@@ -24,115 +27,79 @@ class WidgetService {
 
   /// Initialize the widget service
   static Future<void> initialize() async {
-    // 2. Register the callback
     await HomeWidget.registerInteractivityCallback(backgroundCallback);
-
-    // Note: App Group ID is only needed for iOS
-    // For Android, home_widget uses SharedPreferences automatically
     await _registerBackgroundTask();
   }
 
   /// Fetch data and update the widget
   static Future<void> updateWidget() async {
     try {
+      // 1. Fetch Data
       final client = MoodleClient();
-      final events = await client.fetchVisibleDeadlines();
+      final db = DatabaseService();
 
-      if (events.isEmpty) {
+      final List<AppEvent> allEvents = [];
+
+      // Moodle
+      try {
+        final moodleEvents = await client.fetchVisibleDeadlines();
+        allEvents.addAll(moodleEvents);
+      } catch (e) {
+        print('Widget fetch moodle error: $e');
+      }
+
+      // Custom
+      try {
+        final now = DateTime.now();
+        final customEvents = await db.getEventsForRange(now, now.add(const Duration(days: 365)));
+        allEvents.addAll(customEvents);
+      } catch (e) {
+        print('Widget fetch custom error: $e');
+      }
+
+      // 2. Prepare Widget Data (Deadlines Only)
+      final widgetEvents = allEvents.where((e) =>
+        e.type == AppEventType.moodleDeadline || e.type == AppEventType.customDeadline
+      ).toList();
+
+      if (widgetEvents.isEmpty) {
         await HomeWidget.saveWidgetData<bool>('is_empty', true);
         await HomeWidget.saveWidgetData<int>('event_count', 0);
       } else {
-        // Sort events by time and take up to 10 most urgent
-        events.sort((a, b) => a.timeSort.compareTo(b.timeSort));
-        final upcomingEvents = events.take(10).toList();
+        widgetEvents.sort((a, b) => a.date.compareTo(b.date));
+        final upcomingEvents = widgetEvents.take(10).toList();
 
-        // Convert events to JSON format
         final eventsList = upcomingEvents.map((event) {
-          final dateTime = DateTime.fromMillisecondsSinceEpoch(event.timeSort * 1000);
+          final dateTime = event.date;
           final dateStr = _formatDate(dateTime);
           final timeStr = '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
           final priority = _getPriorityForEvent(event);
 
           return {
-            'name': event.name,
-            'course': event.course,
+            'name': event.title,
+            'course': event.courseName, // Can be empty for custom
             'date': dateStr,
             'time': timeStr,
             'priority': priority,
           };
         }).toList();
 
-        // Save as JSON string
         final eventsJson = jsonEncode(eventsList);
 
         await HomeWidget.saveWidgetData<bool>('is_empty', false);
         await HomeWidget.saveWidgetData<int>('event_count', upcomingEvents.length);
         await HomeWidget.saveWidgetData<String>('all_events_json', eventsJson);
-
-        // --- Notification Logic ---
-        final cacheService = CacheService();
-        final notificationService = NotificationService();
-        final prefs = await PreferencesService.getInstance();
-        
-        final notifyNewTasks = prefs.getNotifyNewTasks();
-        final notifyDeadlines = prefs.getNotifyDeadlines();
-        
-        final knownIds = await cacheService.getKnownTaskIds();
-        final isFirstFetchCompleted = prefs.getIsFirstFetchCompleted();
-        final newIds = <String>[];
-
-        // Check for new tasks
-        if (notifyNewTasks && isFirstFetchCompleted) {
-          for (final event in events) {
-            if (!knownIds.contains(event.uniqueId)) {
-              await notificationService.showNewTaskNotification(
-                event.name,
-                event.course,
-              );
-              newIds.add(event.uniqueId);
-            }
-          }
-        }
-
-        // Sync cache: Overwrite with the current list of IDs
-        final currentTaskIds = events.map((e) => e.uniqueId).toList();
-        await cacheService.saveTaskIds(currentTaskIds);
-        
-        if (!isFirstFetchCompleted) {
-          await prefs.setIsFirstFetchCompleted(true);
-        }
-
-        // Schedule Deadlines
-        if (notifyDeadlines) {
-          final alertOffsets = prefs.getDeadlineAlerts();
-          
-          for (final event in events) {
-            final deadline = DateTime.fromMillisecondsSinceEpoch(event.timeSort * 1000);
-            
-            for (final offsetMinutes in alertOffsets) {
-              // Create a unique ID for each notification: eventId * 10000 + offset
-              // This assumes offset is < 10000 (max 6 days) and event ID doesn't overflow
-              final notificationId = (event.id * 10000) + offsetMinutes; 
-              
-              await notificationService.scheduleDeadlineNotification(
-                notificationId,
-                event.name,
-                deadline,
-                Duration(minutes: offsetMinutes),
-              );
-            }
-          }
-        }
-        // --------------------------
       }
 
-      // Update the widget UI
+      // 3. Notification Logic
+      await _handleNotifications(allEvents);
+
+      // 4. Update UI
       await HomeWidget.updateWidget(
         name: _widgetName,
         androidName: _widgetName,
       );
     } catch (e) {
-      // Handle error - save error state
       await HomeWidget.saveWidgetData<bool>('has_error', true);
       await HomeWidget.saveWidgetData<String>('error_message', e.toString());
 
@@ -143,24 +110,86 @@ class WidgetService {
     }
   }
 
-  /// Get priority color based on event timing
-  static String _getPriorityForEvent(MoodleEvent event) {
-    final deadline = DateTime.fromMillisecondsSinceEpoch(event.timeSort * 1000);
+  static Future<void> _handleNotifications(List<AppEvent> allEvents) async {
+    final cacheService = CacheService();
+    final notificationService = NotificationService();
+    final prefs = await PreferencesService.getInstance();
+
+    final notifyNewTasks = prefs.getNotifyNewTasks();
+    final notifyDeadlines = prefs.getNotifyDeadlines();
+    final notifyCustomTasks = prefs.getNotifyCustomTasks();
+
+    final knownIds = await cacheService.getKnownTaskIds();
+    final isFirstFetchCompleted = prefs.getIsFirstFetchCompleted();
+
+    // Check for NEW tasks (Moodle Only)
+    // We skip Custom events for "New Task" notification as user created them.
+    if (notifyNewTasks && isFirstFetchCompleted) {
+      for (final event in allEvents) {
+        if (event.type == AppEventType.moodleDeadline) {
+          if (!knownIds.contains(event.uniqueId)) {
+            await notificationService.showNewTaskNotification(
+              event.title,
+              event.courseName,
+            );
+          }
+        }
+      }
+    }
+
+    // Sync cache
+    final currentTaskIds = allEvents.map((e) => e.uniqueId).toList();
+    await cacheService.saveTaskIds(currentTaskIds);
+
+    if (!isFirstFetchCompleted) {
+      await prefs.setIsFirstFetchCompleted(true);
+    }
+
+    // Schedule Reminders
+    final alertOffsets = prefs.getDeadlineAlerts();
+
+    for (final event in allEvents) {
+      // Check prefs based on type
+      bool shouldNotify = false;
+      if (event.type == AppEventType.customTask) {
+        if (notifyCustomTasks) shouldNotify = true;
+      } else {
+        // Deadlines (Moodle + Custom)
+        if (notifyDeadlines) shouldNotify = true;
+      }
+
+      if (shouldNotify) {
+        final deadline = event.date;
+        for (final offsetMinutes in alertOffsets) {
+          // Unique ID generation using hashCode to handle string IDs
+          // Combining with offset to make it unique per alert time
+          final notificationId = (event.uniqueId.hashCode) + offsetMinutes;
+
+          await notificationService.scheduleDeadlineNotification(
+            notificationId,
+            event.title,
+            deadline,
+            Duration(minutes: offsetMinutes),
+          );
+        }
+      }
+    }
+  }
+
+  static String _getPriorityForEvent(AppEvent event) {
+    final deadline = event.date;
     final priority = EventDateUtils.getPriority(deadline);
 
     switch (priority) {
       case EventPriority.high:
-        return 'high'; // Red (Today)
+        return 'high';
       case EventPriority.medium:
-        return 'medium'; // Yellow (Tomorrow)
+        return 'medium';
       case EventPriority.low:
-        return 'low'; // Blue (Future)
+        return 'low';
     }
   }
 
-
-
-  /// Format date for widget
   static String _formatDate(DateTime date) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -176,14 +205,12 @@ class WidgetService {
     }
   }
 
-  /// Register background task for periodic widget updates
   static Future<void> _registerBackgroundTask() async {
     await Workmanager().initialize(
       callbackDispatcher,
       isInDebugMode: false,
     );
 
-    // Register periodic task (runs every 15 minutes)
     await Workmanager().registerPeriodicTask(
       _backgroundTaskName,
       _backgroundTaskName,
@@ -194,13 +221,11 @@ class WidgetService {
     );
   }
 
-  /// Cancel background updates
   static Future<void> cancelBackgroundUpdates() async {
     await Workmanager().cancelByUniqueName(_backgroundTaskName);
   }
 }
 
-/// Background task callback
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {

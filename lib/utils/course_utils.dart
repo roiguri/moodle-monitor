@@ -1,19 +1,20 @@
-import 'package:moodie/models/moodle_event.dart';
+import 'package:moodie/models/app_event.dart';
 
 class CourseUtils {
-  static Map<String, List<MoodleEvent>> groupEventsByCourse(List<MoodleEvent> events) {
-    final Map<String, List<MoodleEvent>> groupedEvents = {};
+  static Map<String, List<AppEvent>> groupEventsByCourse(List<AppEvent> events) {
+    final Map<String, List<AppEvent>> groupedEvents = {};
     for (final event in events) {
-      if (groupedEvents.containsKey(event.course)) {
-        groupedEvents[event.course]!.add(event);
+      final courseName = event.courseName.isNotEmpty ? event.courseName : 'Personal';
+      if (groupedEvents.containsKey(courseName)) {
+        groupedEvents[courseName]!.add(event);
       } else {
-        groupedEvents[event.course] = [event];
+        groupedEvents[courseName] = [event];
       }
     }
     return groupedEvents;
   }
 
-  static List<String> getSortedCourseKeys(Map<String, List<MoodleEvent>> groupedEvents) {
+  static List<String> getSortedCourseKeys(Map<String, List<AppEvent>> groupedEvents) {
     final keys = groupedEvents.keys.toList();
     keys.sort();
     return keys;

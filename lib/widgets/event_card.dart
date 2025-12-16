@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:moodie/models/app_event.dart';
 import 'package:moodie/models/moodle_event.dart';
 import 'package:moodie/utils/date_utils.dart';
 import 'package:moodie/constants/app_colors.dart';
@@ -8,7 +9,7 @@ import 'package:moodie/constants/text_styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EventCard extends StatelessWidget {
-  final MoodleEvent event;
+  final AppEvent event;
   final EventPriority priority;
   final bool showCourse;
 
@@ -22,7 +23,7 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = _getColorsForPriority(context, priority);
-    final deadline = DateTime.fromMillisecondsSinceEpoch(event.timeSort * 1000);
+    final deadline = event.date;
     final formattedTime = DateFormat.Hm('he_IL').format(deadline);
     final formattedDate = DateFormat.MMMd('he_IL').format(deadline);
 
@@ -42,7 +43,7 @@ class EventCard extends StatelessWidget {
         ),
       ),
       child: InkWell(
-        onTap: () => _launchUrl(event.url),
+        onTap: () => _handleTap(),
         borderRadius: BorderRadius.circular(12),
         splashColor: colors.border.withOpacity(0.2),
         highlightColor: colors.border.withOpacity(0.1),
@@ -53,6 +54,10 @@ class EventCard extends StatelessWidget {
               ? CrossAxisAlignment.start
               : CrossAxisAlignment.center,
             children: [
+              // Icon based on type
+              Icon(_getIcon(), size: 20, color: colors.accent),
+              const SizedBox(width: 12),
+
               // Event name and course info (switched order)
               Expanded(
                 child: Column(
@@ -60,15 +65,15 @@ class EventCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      event.name,
+                      event.title,
                       style: TextStyles.cardCourse.copyWith(
                         color: colors.text,
                       ),
                     ),
-                    if (showCourse) ...[
+                    if (showCourse && event.courseName.isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Text(
-                        event.course,
+                        event.courseName,
                         style: TextStyles.cardEvent,
                       ),
                     ],
@@ -97,6 +102,25 @@ class EventCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  IconData _getIcon() {
+    switch (event.type) {
+      case AppEventType.moodleDeadline:
+        return Icons.school;
+      case AppEventType.customDeadline:
+        return Icons.timer;
+      case AppEventType.customTask:
+        return Icons.check_circle_outline;
+    }
+  }
+
+  Future<void> _handleTap() async {
+    if (event is MoodleEvent) {
+      final moodleEvent = event as MoodleEvent;
+      _launchUrl(moodleEvent.url);
+    }
+    // For custom events, maybe open edit screen? Or just ignore tap for now.
   }
 
   Future<void> _launchUrl(String urlString) async {
