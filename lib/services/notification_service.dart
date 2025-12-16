@@ -28,7 +28,7 @@ class NotificationService {
 
     // Android initialization
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('ic_notification');
 
     // iOS initialization
     const DarwinInitializationSettings initializationSettingsDarwin =
@@ -85,6 +85,7 @@ class NotificationService {
       importance: Importance.max,
       priority: Priority.high,
       showWhen: true,
+      largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
     );
 
     const NotificationDetails platformChannelSpecifics =
@@ -116,6 +117,7 @@ class NotificationService {
           channelDescription: AppStrings.notificationChannelDeadlinesDesc,
           importance: Importance.high,
           priority: Priority.high,
+          largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
