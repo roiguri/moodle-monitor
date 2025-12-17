@@ -448,9 +448,9 @@ class _TasksViewState extends State<TasksView> {
         if (success) {
            // success
         }
-      } else if (event is CustomEventInstance) {
+      } else if (event is CustomEvent) {
          // Mark as completed in DB
-         await _databaseService.setEventCompletion(event.event.id!, event.instanceDate, true);
+         await _databaseService.setEventCompletion(event.id!, true);
       }
 
       if (mounted) {

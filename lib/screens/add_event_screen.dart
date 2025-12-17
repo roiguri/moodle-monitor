@@ -20,18 +20,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
   DateTime _startDate = DateTime.now();
   TimeOfDay _startTime = TimeOfDay.now();
 
-  // Recurrence
-  bool _isRecurring = false;
-  RecurrenceType _recurrenceType = RecurrenceType.daily;
-  final Set<int> _selectedWeekdays = {};
-  int _recurrenceInterval = 1; // Default to 1
-
-  // End condition
-  // 0: Never (actually handled as null date/count), 1: On Date, 2: After Count
-  int _endConditionType = 0;
-  DateTime? _endDate;
-  final _countController = TextEditingController(text: '10');
-
   @override
   void initState() {
     super.initState();
@@ -133,119 +121,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
-
-            // Recurrence Switch
-            SwitchListTile(
-              title: const Text('Repeat'),
-              value: _isRecurring,
-              onChanged: (val) {
-                setState(() {
-                  _isRecurring = val;
-                });
-              },
-            ),
-
-            if (_isRecurring) ...[
-              const Divider(),
-              const Text('Recurrence Settings', style: TextStyle(fontWeight: FontWeight.bold)),
-
-              DropdownButton<RecurrenceType>(
-                value: _recurrenceType,
-                isExpanded: true,
-                items: const [
-                  DropdownMenuItem(value: RecurrenceType.daily, child: Text('Daily')),
-                  DropdownMenuItem(value: RecurrenceType.weekly, child: Text('Weekly')),
-                ],
-                onChanged: (val) {
-                  if (val != null) setState(() => _recurrenceType = val);
-                },
-              ),
-
-              if (_recurrenceType == RecurrenceType.weekly) _buildWeekdaySelector(),
-
-              const SizedBox(height: 16),
-              const Text('Ends'),
-              RadioListTile<int>(
-                title: const Text('Never'),
-                value: 0,
-                groupValue: _endConditionType,
-                onChanged: (val) => setState(() => _endConditionType = val!),
-              ),
-              RadioListTile<int>(
-                title: const Text('On Date'),
-                value: 1,
-                groupValue: _endConditionType,
-                onChanged: (val) => setState(() => _endConditionType = val!),
-                secondary: _endConditionType == 1
-                    ? TextButton(
-                        child: Text(_endDate != null ? DateFormat('MMM d, y').format(_endDate!) : 'Select Date'),
-                        onPressed: () async {
-                           final date = await showDatePicker(
-                            context: context,
-                            initialDate: _endDate ?? _startDate.add(const Duration(days: 30)),
-                            firstDate: _startDate,
-                            lastDate: DateTime(2100),
-                          );
-                          if (date != null) {
-                            setState(() {
-                              _endDate = date;
-                              _endConditionType = 1;
-                            });
-                          }
-                      })
-                    : null,
-              ),
-              RadioListTile<int>(
-                title: const Text('After occurrences'),
-                value: 2,
-                groupValue: _endConditionType,
-                onChanged: (val) => setState(() => _endConditionType = val!),
-                secondary: SizedBox(
-                  width: 60,
-                  child: TextField(
-                    controller: _countController,
-                    keyboardType: TextInputType.number,
-                    enabled: _endConditionType == 2,
-                  ),
-                ),
-              ),
-            ],
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildWeekdaySelector() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: List.generate(7, (index) {
-          // index 0 = Mon (1) ... index 6 = Sun (7)
-          final day = index + 1;
-          final isSelected = _selectedWeekdays.contains(day);
-          final labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                if (isSelected) {
-                  _selectedWeekdays.remove(day);
-                } else {
-                  _selectedWeekdays.add(day);
-                }
-              });
-            },
-            child: CircleAvatar(
-              radius: 18,
-              backgroundColor: isSelected ? Theme.of(context).primaryColor : Colors.grey[200],
-              foregroundColor: isSelected ? Colors.white : Colors.black,
-              child: Text(labels[index]),
-            ),
-          );
-        }),
       ),
     );
   }
@@ -275,13 +152,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
   Future<void> _saveEvent() async {
     if (!_formKey.currentState!.validate()) return;
 
-    if (_isRecurring && _recurrenceType == RecurrenceType.weekly && _selectedWeekdays.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select at least one day for weekly recurrence')),
-      );
-      return;
-    }
-
     final startDateTime = DateTime(
       _startDate.year,
       _startDate.month,
@@ -290,29 +160,11 @@ class _AddEventScreenState extends State<AddEventScreen> {
       _startTime.minute,
     );
 
-    int? count;
-    DateTime? endDate;
-
-    if (_isRecurring) {
-      if (_endConditionType == 1) {
-        endDate = _endDate;
-      } else if (_endConditionType == 2) {
-        count = int.tryParse(_countController.text);
-      }
-    }
-
     final event = CustomEvent(
       title: _titleController.text,
       description: _descriptionController.text.isNotEmpty ? _descriptionController.text : null,
       type: _type,
       startTime: startDateTime,
-      recurrenceType: _isRecurring ? _recurrenceType : RecurrenceType.none,
-      recurrenceInterval: _recurrenceInterval, // Always 1 for now based on UI
-      recurrenceDays: _isRecurring && _recurrenceType == RecurrenceType.weekly
-          ? _selectedWeekdays.toList()
-          : null,
-      recurrenceEndDate: endDate,
-      recurrenceCount: count,
     );
 
     try {
