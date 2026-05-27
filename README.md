@@ -1,5 +1,3 @@
-> **Status:** Personal project. Not actively maintained — provided as-is for reference.
-
 # Moodie
 
 A modern Flutter application for viewing Moodle assignment deadlines with a beautiful, priority-based interface.
