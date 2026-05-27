@@ -2,6 +2,26 @@
 
 A modern Flutter application for viewing Moodle assignment deadlines with a beautiful, priority-based interface.
 
+
+
+## Goal
+
+Built to improve two things about Moodle's default experience:
+
+- **Notifications** — proactive, deadline-aware reminders for upcoming assignments
+- **Home-screen widget** — see upcoming assignments at a glance without opening the app
+
+Personal app I use to track my own Moodle deadlines — not on the Play Store.
+
+## Screenshots
+
+<p align="center">
+  <img src="assets/images/introduction-screen-transparent.webp" width="180" alt="Onboarding" />
+  <img src="assets/images/tasks-screen-transparent.webp" width="180" alt="Tasks view" />
+  <img src="assets/images/notifications-screen-transparent.webp" width="180" alt="Notifications" />
+  <img src="assets/images/no_tasks_transparent.webp" width="180" alt="Empty state" />
+</p>
+
 ## Features
 
 - 🎨 **Priority-Based Design**: Color-coded cards (red for today, yellow for tomorrow, blue for future)
