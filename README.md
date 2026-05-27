@@ -1,6 +1,18 @@
+> **Status:** Personal project. Not actively maintained — provided as-is for reference.
+
 # Moodie
 
 A modern Flutter application for viewing Moodle assignment deadlines with a beautiful, priority-based interface.
+
+
+## Screenshots
+
+<p align="center">
+  <img src="assets/images/introduction-screen-transparent.webp" width="180" alt="Onboarding" />
+  <img src="assets/images/tasks-screen-transparent.webp" width="180" alt="Tasks view" />
+  <img src="assets/images/notifications-screen-transparent.webp" width="180" alt="Notifications" />
+  <img src="assets/images/no_tasks_transparent.webp" width="180" alt="Empty state" />
+</p>
 
 ## Features
 
